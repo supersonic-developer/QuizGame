@@ -6,18 +6,17 @@ using System.Threading.Tasks;
 
 namespace QuizGame.Models
 {
-    public class CodeBlock
+    public class CodeSnippet
     {
+        // Properties
+        public string Language { get; set; }
+        public string Content { get; set; }
+
         // Parametrizable constructor
-        public CodeBlock(string language, string content) 
+        public CodeSnippet(string language, string content) 
         {
             Language = language;
             Content = content;
         }
-
-        // Properties
-        public string Language { get; set; }
-
-        public string Content { get; set; }
     }
 }

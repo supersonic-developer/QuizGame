@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using QuizGame.ViewModels;
 
 namespace QuizGame
 {
@@ -16,10 +17,8 @@ namespace QuizGame
                 });
 
             // Add services
-            //string path = "C:\\Users\\Zsombor\\git-repos\\QuizGame\\QuizGame\\quiz-assessments\\c++\\c++-quiz.md";
-            //string path = "C:\\Users\\Zsombor\\git-repos\\QuizGame\\QuizGame\\quiz-assessments\\c-(programming-language)\\c-(programming-language)-quiz.md";
-            string path = "C:\\Users\\Zsombor\\git-repos\\QuizGame\\QuizGame\\quiz-assessments\\adobe-xd\\adobe-xd-quiz.md";
-            Models.MarkdownParser.ParseQuestions(path);
+            builder.Services.AddSingleton<MainPageViewModel>();
+            builder.Services.AddSingleton<MainPage>();
 #if DEBUG
     		builder.Logging.AddDebug();
 #endif

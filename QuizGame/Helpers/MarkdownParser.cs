@@ -2,17 +2,22 @@
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using QuizGame.Models;
 
-namespace QuizGame.Models
+namespace QuizGame.Helpers
 {
     public static class MarkdownParser
     {
-        public static List<Question> ParseQuestions(string filePath)
+        // Propety
+        public static List<string> TopicsPaths = new List<string>();
+
+        // Parser functions
+        public static async Task<List<Question>> ParseQuestions(int pathID)
         {
             // Read in file as plain text
-            string sourceText = File.ReadAllText(filePath);
+            string sourceText = await LoadFile(TopicsPaths[pathID]);
             // Get directory of .md file
-            string directory = Path.GetDirectoryName(filePath) ?? throw new Exception("Failed to get directory from file path.");
+            string directory = Path.GetDirectoryName(TopicsPaths[pathID]) ?? throw new Exception("Failed to get directory of given file path.");
 
             // Parse the text 
             var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
@@ -28,7 +33,7 @@ namespace QuizGame.Models
             {
                 switch (block)
                 {
-                    case HeadingBlock:          
+                    case HeadingBlock:
                         isReadingQuestion = true;
                         // Parse heading to question
                         Question? currentQuestion = ParseQuestion((HeadingBlock)block, quiz);
@@ -57,13 +62,20 @@ namespace QuizGame.Models
             return quiz;
         }
 
+        private static async Task<string> LoadFile(string path)
+        {
+            using var stream = await FileSystem.OpenAppPackageFileAsync(path);
+            using var reader = new StreamReader(stream);
+            return reader.ReadToEnd();
+        }
+
         private static void ParseImages(ParagraphBlock paragraphBlock, Question currentQuestion, string rootDir)
         {
-            if (paragraphBlock.Inline == null) 
+            if (paragraphBlock.Inline == null)
                 return;
             foreach (var descendant in paragraphBlock.Inline.Descendants())
             {
-                if (descendant is Markdig.Syntax.Inlines.LinkInline linkInline)
+                if (descendant is LinkInline linkInline)
                 {
                     if (linkInline.IsImage)
                     {
@@ -118,13 +130,13 @@ namespace QuizGame.Models
             {
                 if (isReadingQuestion)
                 {
-                    currentQuestion.CodeBlocks ??= new List<CodeBlock>();
-                    currentQuestion.CodeBlocks.Add(new CodeBlock(language, code));
+                    currentQuestion.CodeBlocks ??= new List<CodeSnippet>();
+                    currentQuestion.CodeBlocks.Add(new CodeSnippet(language, code));
                 }
-                else 
+                else
                 {
-                    currentQuestion.Answers[currentQuestion.Answers.Count - 1].CodeBlocks ??= new List<CodeBlock>();
-                    currentQuestion.Answers[currentQuestion.Answers.Count - 1].CodeBlocks.Add(new CodeBlock(language, code));
+                    currentQuestion.Answers[^1].CodeBlocks ??= new List<CodeSnippet>();
+                    currentQuestion.Answers[^1].CodeBlocks?.Add(new CodeSnippet(language, code));
                 }
             }
         }

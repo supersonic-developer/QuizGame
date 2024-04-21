@@ -2,9 +2,9 @@
 
 namespace QuizGame.ViewModels
 {
-    public class QuizVM
+    public class QuizViewModel
     {
-        public QuizVM(Quiz game) 
+        public QuizViewModel(Quiz game) 
         { 
             rnd = new Random();
             Game = game;
