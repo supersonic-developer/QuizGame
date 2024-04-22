@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QuizGame.MainPage">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource OffBlack}}">
+            <VerticalStackLayout 
+                HorizontalOptions="Fill">
+                <HorizontalStackLayout
+                    Spacing="0"
+                    HorizontalOptions="Center">
+                    <Label
+                        Text="Linked"
+                        Style="{StaticResource Headline}"
+                        VerticalOptions="Center"/>
+                    <Image
+                        Source="linkedin_logo.png"/>
+                </HorizontalStackLayout>
+                <Label
+                    Text="Skill assessment quizzes"
+                    Style="{StaticResource Headline}"/>
+            </VerticalStackLayout>
+
+            <Frame
+                BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Primary}}"
+                BorderColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                CornerRadius="20"
+                HorizontalOptions="Fill"
+                Padding="0,0,0,0">
+                <VerticalStackLayout>
+                    <Label
+                        Text="Available topics"
+                        Style="{StaticResource SubHeadline}" 
+                        Padding="10,10,10,10"/>
+                    <Frame
+                        HorizontalOptions="Fill"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray600}}"
+                        BorderColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                        CornerRadius="20"
+                        Padding="0,0,0,0">
+                        <VerticalStackLayout
+                            x:Name="butVerticalStackLayout"
+                            WidthRequest="200"
+                            Spacing="5"
+                            Padding="10,10,10,10">
+                        </VerticalStackLayout>
+                    </Frame>
+                </VerticalStackLayout>
+            </Frame>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
