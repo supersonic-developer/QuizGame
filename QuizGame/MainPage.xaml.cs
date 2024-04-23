@@ -7,36 +7,25 @@ namespace QuizGame
 {
     public partial class MainPage : ContentPage
     {
-        // Properties
-        private static string topicsPath = "topics.txt";
-        public MainPageViewModel MainPageViewModel { get; set; }
+        // Member variable
+        private MainPageViewModel mainPageViewModel;
 
         // Constructor
         public MainPage(MainPageViewModel mainPageViewModel)
         {
+            BindingContext = mainPageViewModel;
             InitializeComponent();
-            MainPageViewModel = mainPageViewModel;
-            Loaded += OnPageLoaded;
-            MainPageViewModel.Topics.CollectionChanged += CreateButtons;
+            this.mainPageViewModel = mainPageViewModel;
         }
 
         // Methods
-        private async void OnPageLoaded(object? sender, EventArgs e) => await MainPageViewModel.ReadTopics(topicsPath);
-
-        private void CreateButtons(object? sender, EventArgs e)
+        protected override async void OnAppearing()
         {
-            if (sender == MainPageViewModel.Topics)
-            {
-                CreateButton(MainPageViewModel.Topics[^1]);
-            }
+            base.OnAppearing();
+            await mainPageViewModel.ReadTopicsAsync();
         }
 
-        private void CreateButton(string text)
-        {
-            Button button = new Button();
-            button.Text = text;
-            butVerticalStackLayout.Children.Add(button);
-        }
+        public void OnSearchBarTextChanged(object sender, TextChangedEventArgs e) => mainPageViewModel.PerformSearch(e.NewTextValue);
     }
 
 }

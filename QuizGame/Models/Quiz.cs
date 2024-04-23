@@ -9,7 +9,6 @@ namespace QuizGame.Models
     public class Quiz
     {
         public List<Question> Questions { get; set; }
-        public int SelectedQuestion { get; set; }
 
         public Quiz(List<Question> questions) 
         { 

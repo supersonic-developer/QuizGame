@@ -8,16 +8,13 @@ namespace QuizGame.Helpers
 {
     public static class MarkdownParser
     {
-        // Propety
-        public static List<string> TopicsPaths = new List<string>();
-
         // Parser functions
-        public static async Task<List<Question>> ParseQuestions(int pathID)
+        public static async Task<List<Question>> ParseQuestionsAsync(string path)
         {
             // Read in file as plain text
-            string sourceText = await LoadFile(TopicsPaths[pathID]);
+            string sourceText = await LoadFileAsync(path);
             // Get directory of .md file
-            string directory = Path.GetDirectoryName(TopicsPaths[pathID]) ?? throw new Exception("Failed to get directory of given file path.");
+            string directory = Path.GetDirectoryName(path) ?? throw new Exception("Failed to get directory of given file path.");
 
             // Parse the text 
             var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
@@ -53,7 +50,7 @@ namespace QuizGame.Helpers
                         // Links for answers, currently I wont use
                         break;
                     case LinkReferenceDefinitionGroup:
-                        // Still links just they didnt place it inside brackets
+                        // Still links just they werent placed inside brackets
                         break;
                     default:
                         break;
@@ -62,11 +59,11 @@ namespace QuizGame.Helpers
             return quiz;
         }
 
-        private static async Task<string> LoadFile(string path)
+        private static async Task<string> LoadFileAsync(string path)
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync(path);
             using var reader = new StreamReader(stream);
-            return reader.ReadToEnd();
+            return await reader.ReadToEndAsync();
         }
 
         private static void ParseImages(ParagraphBlock paragraphBlock, Question currentQuestion, string rootDir)

@@ -30,22 +30,27 @@
                 HorizontalOptions="Fill"
                 Padding="0,0,0,0">
                 <VerticalStackLayout>
-                    <Label
-                        Text="Available topics"
+                    <SearchBar
+                        TextChanged="OnSearchBarTextChanged"
+                        Placeholder="Search topic"
                         Style="{StaticResource SubHeadline}" 
-                        Padding="10,10,10,10"/>
+                        Margin="10, 10, 10, 10"
+                        WidthRequest="300"/>
                     <Frame
                         HorizontalOptions="Fill"
                         BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray600}}"
                         BorderColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
                         CornerRadius="20"
                         Padding="0,0,0,0">
-                        <VerticalStackLayout
-                            x:Name="butVerticalStackLayout"
-                            WidthRequest="200"
-                            Spacing="5"
-                            Padding="10,10,10,10">
-                        </VerticalStackLayout>
+                        <CollectionView ItemsSource="{Binding SelectedTopicNames}" WidthRequest="230" Margin="0, 5, 0, 5">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Button
+                                        Text="{Binding .}"
+                                        Margin="0,5,0,5"/>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
                     </Frame>
                 </VerticalStackLayout>
             </Frame>

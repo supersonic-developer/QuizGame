@@ -1,23 +1,35 @@
-﻿using QuizGame.Models;
+﻿using Microsoft.VisualStudio.PlatformUI;
+using QuizGame.Models;
 
 namespace QuizGame.ViewModels
 {
-    public class QuizViewModel
+    public class QuizViewModel : ObservableObject
     {
+        // Member variable
+        private Random rnd;
+        private Quiz game;
+        private Question selectedQuestion;
+
+        // Property
+        public Question SelectedQuestion 
+        {
+            get => selectedQuestion;
+            set => SetProperty(ref selectedQuestion, value);
+        }
+
+        // Constructor
         public QuizViewModel(Quiz game) 
         { 
             rnd = new Random();
-            Game = game;
+            this.game = game;
+            RandomlySelectQuestion();
         }
 
-        private Random rnd;
-
-        public Quiz Game { get; set; }
-
-        public Question RandomlySelectQ()
+        public void RandomlySelectQuestion()
         {
-            int ID = rnd.Next(0, Game.Questions.Count-1);
-            return Game.Questions[ID];
+            int ID = rnd.Next(0, game.Questions.Count-1);
+            SelectedQuestion = game.Questions[ID];
+            game.Questions.RemoveAt(ID);
         }
     }
 }

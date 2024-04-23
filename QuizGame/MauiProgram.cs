@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using QuizGame.Models;
 using QuizGame.ViewModels;
 
 namespace QuizGame
@@ -17,6 +18,8 @@ namespace QuizGame
                 });
 
             // Add services
+            builder.Services.AddSingleton<Topics>();
+            //builder.Services.AddTransient<Quiz>();
             builder.Services.AddSingleton<MainPageViewModel>();
             builder.Services.AddSingleton<MainPage>();
 #if DEBUG
