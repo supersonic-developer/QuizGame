@@ -1,12 +1,64 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="QuizGame.QuizPage"
-             Title="QuizPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:viewmodel="clr-namespace:QuizGame.ViewModels"
+             x:Class="QuizGame.QuizPage">
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
+
+    <ScrollView>
+        <VerticalStackLayout
+         Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource OffBlack}}">
+            <VerticalStackLayout 
+             HorizontalOptions="Fill">
+                <HorizontalStackLayout
+                 Spacing="0"
+                 HorizontalOptions="Center">
+                    <Label
+                     Text="Linked"
+                     Style="{StaticResource Headline}"
+                     VerticalOptions="Center"/>
+                    <Image
+                     Source="linkedin_logo.png"/>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+            <Frame
+             BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Primary}}"
+             BorderColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+             CornerRadius="20"
+             HorizontalOptions="Fill"
+             Padding="0,0,0,0">
+                <VerticalStackLayout>
+                    <Label 
+                        Text="{Binding SelectedQuestion.Text}"
+                        Style="{StaticResource SubHeadline}"
+                        VerticalOptions="Center" 
+                        HorizontalOptions="Center" />
+                    <Image Source="{Binding SelectedQuestion.ImagePath}" Aspect="AspectFit" HorizontalOptions="Fill"/>
+                    <WebView Source="{Binding HtmlWebViewSource}" IsVisible="{Binding CodeVisibility}" WidthRequest="300" HeightRequest="300"/>
+                    <Frame
+                     HorizontalOptions="Fill"
+                     BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray600}}"
+                     BorderColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+                     CornerRadius="20"
+                     Padding="0,0,0,0">
+                        <CollectionView ItemsSource="{Binding SelectedQuestion.Answers}" Margin="0, 5, 0, 5">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Button
+                                     Text="{Binding Text}"
+                                     Margin="0,5,0,5"/>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </Frame>
+                </VerticalStackLayout>
+            </Frame>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace QuizGame.Models
 {
-    public class CodeSnippet
+    public partial class CodeSnippet : ObservableObject
     {
         // Properties
-        public string Language { get; set; }
-        public string Content { get; set; }
+        [ObservableProperty]
+        string language;
+
+        [ObservableProperty]
+        string content;
 
         // Parametrizable constructor
         public CodeSnippet(string language, string content) 

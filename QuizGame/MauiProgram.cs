@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using QuizGame.Models;
 using QuizGame.ViewModels;
+using CommunityToolkit.Maui;
 
 namespace QuizGame
 {
@@ -15,13 +16,15 @@ namespace QuizGame
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                });
+                })
+                .UseMauiCommunityToolkit();
 
             // Add services
             builder.Services.AddSingleton<Topics>();
-            //builder.Services.AddTransient<Quiz>();
             builder.Services.AddSingleton<MainPageViewModel>();
+            builder.Services.AddTransient<QuizViewModel>();
             builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddTransient<QuizPage>();
 #if DEBUG
     		builder.Logging.AddDebug();
 #endif

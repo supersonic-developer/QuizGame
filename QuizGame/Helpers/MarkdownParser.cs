@@ -76,7 +76,7 @@ namespace QuizGame.Helpers
                 {
                     if (linkInline.IsImage)
                     {
-                        currentQuestion.ImageFilePath = rootDir + "\\" + linkInline.Url?.Replace("/", "\\");
+                        currentQuestion.ImagePath = rootDir + @"\" + linkInline.Url?.Replace("/", @"\");
                     }
                 }
             }
@@ -111,7 +111,8 @@ namespace QuizGame.Helpers
                         string answer = "";
                         foreach (var descendant in paragraphBlock.Inline.Descendants())
                         {
-                            answer += descendant.ToString();
+                            if (descendant is LiteralInline && descendant.ToString() != " :")
+                                answer += descendant.ToString();
                         }
                         currentQuestion.Answers.Add(new Answer(answer, taskList.Checked));
                     }
@@ -127,13 +128,11 @@ namespace QuizGame.Helpers
             {
                 if (isReadingQuestion)
                 {
-                    currentQuestion.CodeBlocks ??= new List<CodeSnippet>();
-                    currentQuestion.CodeBlocks.Add(new CodeSnippet(language, code));
+                    currentQuestion.CodeBlock ??= new CodeSnippet(language, code);
                 }
                 else
                 {
-                    currentQuestion.Answers[^1].CodeBlocks ??= new List<CodeSnippet>();
-                    currentQuestion.Answers[^1].CodeBlocks?.Add(new CodeSnippet(language, code));
+                    currentQuestion.Answers[^1].CodeBlock ??= new CodeSnippet(language, code);
                 }
             }
         }

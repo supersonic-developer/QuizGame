@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,11 +7,16 @@ using System.Threading.Tasks;
 
 namespace QuizGame.Models
 {
-    public class Answer
+    public partial class Answer : ObservableObject
     {
-        public string Text { get; set; }
-        public bool IsCorrect { get; set; }
-        public List<CodeSnippet>? CodeBlocks { get; set; }
+        [ObservableProperty]
+        string text;
+
+        [ObservableProperty]
+        bool isCorrect;
+
+        [ObservableProperty]
+        CodeSnippet? codeBlock;
 
         public Answer(string text, bool isCorrect) 
         { 

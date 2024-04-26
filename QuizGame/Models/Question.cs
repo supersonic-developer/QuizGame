@@ -1,29 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
 
 namespace QuizGame.Models
 {
-    public class Question
+    public partial class Question : ObservableObject
     {
-        // static variable to generate unique IDs
-        private static int nextID = 1;
-
         // Properties
-        public int ID { get; }
-        public string Text { get; set; }
-        public List<Answer> Answers { get; set; }
-        public List<CodeSnippet>? CodeBlocks { get; set; }
-        public string? ImageFilePath { get; set; }
+        [ObservableProperty]
+        string text;
+
+        [ObservableProperty]
+        List<Answer> answers;
+
+        [ObservableProperty]
+        CodeSnippet? codeBlock;
+
+        [ObservableProperty]
+        string? imagePath;
 
         // Constructor
         public Question(string text) 
         {
-            ID = nextID++;
             Text = text;
-            Answers = new List<Answer>();
+            Answers = [];
         }
     }
 }

@@ -56,25 +56,23 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AndroidResource Remove="Views\**" />
-	  <Compile Remove="Views\**" />
-	  <EmbeddedResource Remove="Views\**" />
-	  <MauiCss Remove="Views\**" />
-	  <MauiXaml Remove="Views\**" />
-	  <None Remove="Views\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <None Remove="Resources\Images\linkedin_logo.png" />
 	  <None Remove="Resources\linkedin-skill-assessments-quizzes\adobe-lightroom\adobe-lightroom-ch.md" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" Version="8.0.1" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+		<PackageReference Include="Highlight.js" Version="1.0.4" />
 		<PackageReference Include="Markdig" Version="0.37.0" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.21" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.21" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.9.37000" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Views\" />
 	</ItemGroup>
 
 </Project>

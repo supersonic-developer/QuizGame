@@ -1,7 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:viewmodel="clr-namespace:QuizGame.ViewModels"
              x:Class="QuizGame.MainPage">
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding AppearingCommand}" />
+        <toolkit:EventToCommandBehavior
+            EventName="Disappearing"
+            Command="{Binding DisappearingCommand}"
+            CommandParameter="{Binding ., Source={x:Reference searchBar}}"/>
+    </ContentPage.Behaviors>
 
     <ScrollView>
         <VerticalStackLayout
@@ -30,23 +42,31 @@
                 HorizontalOptions="Fill"
                 Padding="0,0,0,0">
                 <VerticalStackLayout>
-                    <SearchBar
-                        TextChanged="OnSearchBarTextChanged"
-                        Placeholder="Search topic"
-                        Style="{StaticResource SubHeadline}" 
-                        Margin="10, 10, 10, 10"
-                        WidthRequest="300"/>
+                    <SearchBar x:Name="searchBar" 
+                               Placeholder="Search topic..." 
+                               Style="{StaticResource SubHeadline}" 
+                               Margin="10, 10, 10, 10" 
+                               WidthRequest="300">
+                        <SearchBar.Behaviors>
+                            <toolkit:EventToCommandBehavior
+                                EventName="TextChanged"
+                                Command="{Binding PerformSearchCommand}"
+                                CommandParameter="{Binding Text, Source={x:Reference searchBar}}"/>
+                        </SearchBar.Behaviors>
+                    </SearchBar>
                     <Frame
                         HorizontalOptions="Fill"
                         BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray600}}"
                         BorderColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
                         CornerRadius="20"
                         Padding="0,0,0,0">
-                        <CollectionView ItemsSource="{Binding SelectedTopicNames}" WidthRequest="230" Margin="0, 5, 0, 5">
+                        <CollectionView ItemsSource="{Binding SelectedTopicNames}" WidthRequest="230" Margin="0, 5, 0, 5" EmptyView="No result was found">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <Button
                                         Text="{Binding .}"
+                                        Command="{Binding NavigateCommand, Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}}"
+                                        CommandParameter="{Binding Text, Source={RelativeSource Self}}"
                                         Margin="0,5,0,5"/>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
