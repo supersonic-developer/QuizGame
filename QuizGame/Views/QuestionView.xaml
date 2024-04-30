@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QuizGame.Views.QuestionView"
+             xmlns:local="clr-namespace:QuizGame.Views"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:viewmodel="clr-namespace:QuizGame.ViewModels">
+
+    <VerticalStackLayout>
+        <Label
+            Text="{Binding Question.Text}"
+            Style="{StaticResource SubHeadline}"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+        <Image 
+            Source="{Binding Question.ImagePath}" 
+            Aspect="AspectFit" 
+            HorizontalOptions="Fill"/>
+        <ContentView HorizontalOptions="Center">
+            <local:CodeSnippetView BindingContext="{Binding CodeViewModel}"/>
+        </ContentView>
+        <CollectionView
+            x:Name="answersCollectionView"
+            ItemsSource="{Binding AnswerViewModels}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <HorizontalStackLayout HorizontalOptions="Center">
+
+                        <CheckBox VerticalOptions="Center" CheckedChanged="CheckBox_CheckedChanged"/>
+
+                        <ContentView VerticalOptions="Center">
+                            <local:AnswerView BindingContext="{Binding .}"/>
+                        </ContentView>
+                        
+                    </HorizontalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentView>

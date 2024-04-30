@@ -72,7 +72,24 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Views\" />
+	  <Compile Update="Views\AnswerView.xaml.cs">
+	    <DependentUpon>AnswerView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\QuestionView.xaml.cs">
+	    <DependentUpon>QuestionView.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Views\AnswerView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\CodeSnippetView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\QuestionView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 </Project>

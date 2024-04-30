@@ -17,7 +17,7 @@
 
     <ScrollView>
         <VerticalStackLayout
-            Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource OffBlack}}">
+            Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
             <VerticalStackLayout 
                 HorizontalOptions="Fill">
                 <HorizontalStackLayout
