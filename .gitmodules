@@ -1,3 +1,6 @@
-[submodule "QuizGame/Resources/linkedin-skill-assessments-quizzes"]
-	path = QuizGame/Resources/linkedin-skill-assessments-quizzes
+[submodule "QuizGame/Resources/Images/linkedin-skill-assessments-quizzes"]
+	path = QuizGame/Resources/Images/linkedin-skill-assessments-quizzes
+	url = https://github.com/supersonic-developer/linkedin-skill-assessments-quizzes.git
+[submodule "QuizGame/Resources/Raw/linkedin-skill-assessments-quizzes"]
+	path = QuizGame/Resources/Raw/linkedin-skill-assessments-quizzes
 	url = https://github.com/supersonic-developer/linkedin-skill-assessments-quizzes.git

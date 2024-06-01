@@ -28,7 +28,7 @@ namespace QuizGame.ViewModels
         async Task AppearingAsync()
         {
             // Data was already read in from file, just set page default
-            if (topics.Topic.Count > 0)
+            if (topics.TopicsData.Count > 0)
             {
                 return;
             }
@@ -48,7 +48,7 @@ namespace QuizGame.ViewModels
         void PerformSearch(string keyWord)
         {
             // Perform case-insensitive search and add matching names to SelectedNames
-            List<string> searchResult = topics.Topic.Select(element => element.Name)
+            List<string> searchResult = topics.TopicsData.Select(element => element.Name)
                                                     .Where(name => name.StartsWith(keyWord, StringComparison.OrdinalIgnoreCase)).ToList();
             // Reinitialize SelectedTopics only if current result differ from it
             if (!Enumerable.SequenceEqual(searchResult, SelectedTopicNames))
@@ -60,7 +60,7 @@ namespace QuizGame.ViewModels
         [RelayCommand]
         async Task NavigateAsync(string butText)
         {
-            var result = topics.Topic.Find(element => element.Name == butText);
+            var result = topics.TopicsData.Find(element => element.Name == butText);
             await Shell.Current.GoToAsync($"{nameof(QuizPage)}?TargetPath={Uri.EscapeDataString(result.Path)}");
         }
 
@@ -74,9 +74,9 @@ namespace QuizGame.ViewModels
                 TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
                 string formattedName = textInfo.ToTitleCase(word.Replace("-", " "));
                 // Add to list
-                topics.Topic.Add((path, formattedName));
+                topics.TopicsData.Add((path, formattedName));
             }
-            SelectedTopicNames = topics.Topic.Select(element => element.Name).ToList();
+            SelectedTopicNames = topics.TopicsData.Select(element => element.Name).ToList();
         }
 
      

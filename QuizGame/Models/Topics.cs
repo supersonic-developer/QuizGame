@@ -1,17 +1,19 @@
-﻿using System.Collections.ObjectModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using QuizGame.Helpers;
+using System.Collections.ObjectModel;
 
 namespace QuizGame.Models
 {
-    public class Topics
+    public partial class Topics : ObservableObject
     {
         // Properties
-        public List<(string Path, string Name)> Topic { get; }
-        public string TopicsFile { get; }
+        [ObservableProperty]
+        List<(string Path, string Name)> topicsData;
 
         public Topics()
         {
-            Topic = new List<(string, string)>();
-            TopicsFile = "topics.txt";
+            TopicsData = [];
+            _ = new TopicsInitializer(this);
         }
     }
 }

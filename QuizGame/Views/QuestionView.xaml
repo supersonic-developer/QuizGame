@@ -26,7 +26,7 @@
                 <DataTemplate>
                     <HorizontalStackLayout HorizontalOptions="Center">
 
-                        <CheckBox VerticalOptions="Center" CheckedChanged="CheckBox_CheckedChanged"/>
+                        <CheckBox VerticalOptions="Center" />
 
                         <ContentView VerticalOptions="Center">
                             <local:AnswerView BindingContext="{Binding .}"/>
