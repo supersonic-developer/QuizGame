@@ -7,73 +7,71 @@
 
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior
-            EventName="Appearing"
-            Command="{Binding AppearingCommand}" />
-        <toolkit:EventToCommandBehavior
             EventName="Disappearing"
             Command="{Binding DisappearingCommand}"
             CommandParameter="{Binding ., Source={x:Reference searchBar}}"/>
     </ContentPage.Behaviors>
 
-    <ScrollView>
-        <VerticalStackLayout
-            Background="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
-            <VerticalStackLayout 
-                HorizontalOptions="Fill">
-                <HorizontalStackLayout
-                    Spacing="0"
-                    HorizontalOptions="Center">
-                    <Label
-                        Text="Linked"
-                        Style="{StaticResource Headline}"
-                        VerticalOptions="Center"/>
-                    <Image
-                        Source="linkedin_logo.png"/>
-                </HorizontalStackLayout>
-                <Label
-                    Text="Skill assessment quizzes"
-                    Style="{StaticResource Headline}"/>
-            </VerticalStackLayout>
 
-            <Frame
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Primary}}"
-                BorderColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                CornerRadius="20"
-                HorizontalOptions="Fill"
-                Padding="0,0,0,0">
-                <VerticalStackLayout>
-                    <SearchBar x:Name="searchBar" 
-                               Placeholder="Search topic..." 
-                               Style="{StaticResource SubHeadline}" 
-                               Margin="10, 10, 10, 10" 
-                               WidthRequest="300">
-                        <SearchBar.Behaviors>
-                            <toolkit:EventToCommandBehavior
-                                EventName="TextChanged"
-                                Command="{Binding PerformSearchCommand}"
-                                CommandParameter="{Binding Text, Source={x:Reference searchBar}}"/>
-                        </SearchBar.Behaviors>
-                    </SearchBar>
-                    <Frame
-                        HorizontalOptions="Fill"
-                        BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray600}}"
-                        BorderColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
-                        CornerRadius="20"
-                        Padding="0,0,0,0">
-                        <CollectionView ItemsSource="{Binding SelectedTopicNames}" WidthRequest="230" Margin="0, 5, 0, 5" EmptyView="No result was found">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Button
-                                        Text="{Binding .}"
-                                        Command="{Binding NavigateCommand, Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}}"
-                                        CommandParameter="{Binding Text, Source={RelativeSource Self}}"
-                                        Margin="0,5,0,5"/>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </Frame>
-                </VerticalStackLayout>
-            </Frame>
+    <Grid 
+        BackgroundColor="{StaticResource OffBlack}">
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <VerticalStackLayout
+            Grid.Row="0"
+            Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Black}}">
+            <HorizontalStackLayout
+                Spacing="0"
+                HorizontalOptions="Center">
+                <Label
+                    Text="Linked"
+                    Style="{StaticResource Headline}"
+                    VerticalOptions="Center"/>
+                <Image
+                    Source="linkedin_logo.png"/>
+            </HorizontalStackLayout>
+            <Label
+                Text="Skill assessment quizzes"
+                Style="{StaticResource Headline}"/>
         </VerticalStackLayout>
-    </ScrollView>
+
+
+        <SearchBar 
+            Grid.Row="1"
+            x:Name="searchBar" 
+            Placeholder="Search topic..."  
+            Margin="10, 10, 10, 10" 
+            WidthRequest="300">
+            <SearchBar.Behaviors>
+                <toolkit:EventToCommandBehavior
+                    EventName="TextChanged"
+                    Command="{Binding PerformSearchCommand}"
+                    CommandParameter="{Binding Text, Source={x:Reference searchBar}}"/>
+            </SearchBar.Behaviors>
+        </SearchBar>
+            
+        <CollectionView 
+            Grid.Row="2"
+            ItemsSource="{Binding SelectedTopicNames}"
+            WidthRequest="230"
+            Margin="0, 5, 0, 5"
+            EmptyView="No result was found">
+            
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Button
+                        Text="{Binding .}"
+                        Command="{Binding NavigateCommand, Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}}"
+                        CommandParameter="{Binding Text, Source={RelativeSource Self}}"
+                        Margin="0,5,0,5"/>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+                
+        </CollectionView>
+    </Grid>
 </ContentPage>

@@ -57,6 +57,7 @@
 
 	<ItemGroup>
 	  <MauiImage Remove="Resources\Images\linkedin-skill-assessments-quizzes\.git" />
+	  <MauiImage Remove="Resources\Images\linkedin-skill-assessments-quizzes\LICENSE" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="QuizGame.Views.CodeSnippetView">
+             x:Class="QuizGame.Views.CodeSnippetView"
+             xmlns:converters="clr-namespace:QuizGame.Converters">
+
+    <ContentView.Resources>
+        <converters:TaskResultConverter x:Key="TaskResultConverter"/>
+    </ContentView.Resources>
     
-    <WebView IsVisible="{Binding IsVisible}" WidthRequest="{Binding Width}" HeightRequest="{Binding Height}">
+    <WebView 
+        BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}"
+        IsVisible="{Binding IsVisible}" 
+        WidthRequest="{Binding Width}" 
+        HeightRequest="{Binding Height}">
+        
         <WebView.Source>
-            <HtmlWebViewSource Html="{Binding Html2Display}"/>
+            <HtmlWebViewSource Html="{Binding Html2Display, Converter={StaticResource TaskResultConverter}}"/>
         </WebView.Source>
+        
     </WebView>
 </ContentView>

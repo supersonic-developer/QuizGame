@@ -16,12 +16,6 @@ namespace QuizGame.ViewModels
         [ObservableProperty]
         ObservableCollection<AnswerViewModel> answerViewModels;
 
-        public QuestionViewModel()
-        {
-            Question = new Question("");
-            codeViewModel = new CodeSnippetViewModel(null);
-            answerViewModels = new ObservableCollection<AnswerViewModel>();
-        }
         public QuestionViewModel(Question question)
         {
             Question = question;

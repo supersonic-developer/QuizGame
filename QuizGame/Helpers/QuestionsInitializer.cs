@@ -6,7 +6,7 @@ using QuizGame.Models;
 
 namespace QuizGame.Helpers
 {
-    public class QuestionsInitializer : BaseModelInitializer
+    public class QuestionsInitializer 
     {
         // File path
         readonly string currentPath;
@@ -19,59 +19,59 @@ namespace QuizGame.Helpers
         { 
             currentPath = path;
             AsyncLazyQuestionsReader = new(ParseQuestionsAsync, new JoinableTaskContext().Factory);
-        } 
+        }
 
         // Parser functions
-        public async Task<List<Question>> ParseQuestionsAsync()
-        {
-            // Read in file as plain text
-            string sourceText = await LoadFileAsync(currentPath);
+        public async Task<List<Question>> ParseQuestionsAsync() => new List<Question>();
+        //{
+        //    // Read in file as plain text
+        //    string sourceText = await BaseModelInitializer.LoadFileAsync(currentPath);
 
-            // Get directory of .md file
-            string directory = currentPath[..currentPath.LastIndexOf('\\')] ?? throw new Exception("Failed to get directory of given file path.");
+        //    // Get directory of .md file
+        //    string directory = currentPath[..currentPath.LastIndexOf('\\')] ?? throw new Exception("Failed to get directory of given file path.");
 
-            // Parse the text 
-            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-            var document = Markdown.Parse(sourceText, pipeline);
+        //    // Parse the text 
+        //    var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+        //    var document = Markdown.Parse(sourceText, pipeline);
 
-            // Create the list for questions
-            List<Question> quiz = [];
-            // Auxiliary variable for process
-            bool isReadingQuestion = false;
+        //    // Create the list for questions
+        //    List<Question> quiz = [];
+        //    // Auxiliary variable for process
+        //    bool isReadingQuestion = false;
 
-            // Traverse the AST and process the content
-            foreach (var block in document)
-            {
-                switch (block)
-                {
-                    case HeadingBlock:
-                        isReadingQuestion = true;
-                        // Parse heading to question
-                        Question? currentQuestion = ParseQuestion((HeadingBlock)block, quiz);
-                        break;
-                    case ListBlock:
-                        isReadingQuestion = false;
-                        // Add answer(s) to question
-                        ParseAnswer((ListBlock)block, quiz[^1]);
-                        break;
-                    case FencedCodeBlock:
-                        // Parse code block and add to question or answer
-                        QuestionsInitializer.ParseCodeSnippet((FencedCodeBlock)block, quiz[^1], isReadingQuestion);
-                        break;
-                    case ParagraphBlock:
-                        // Pictures that is required to use
-                        QuestionsInitializer.ParseImages((ParagraphBlock)block, quiz[^1], directory);
-                        // Links for answers, currently I wont use
-                        break;
-                    case LinkReferenceDefinitionGroup:
-                        // Still links just they werent placed inside brackets
-                        break;
-                    default:
-                        break;
-                }
-            }
-            return quiz;
-        }
+        //    // Traverse the AST and process the content
+        //    foreach (var block in document)
+        //    {
+        //        switch (block)
+        //        {
+        //            case HeadingBlock:
+        //                isReadingQuestion = true;
+        //                // Parse heading to question
+        //                Question? currentQuestion = ParseQuestion((HeadingBlock)block, quiz);
+        //                break;
+        //            case ListBlock:
+        //                isReadingQuestion = false;
+        //                // Add answer(s) to question
+        //                ParseAnswer((ListBlock)block, quiz[^1]);
+        //                break;
+        //            case FencedCodeBlock:
+        //                // Parse code block and add to question or answer
+        //                QuestionsInitializer.ParseCodeSnippet((FencedCodeBlock)block, quiz[^1], isReadingQuestion);
+        //                break;
+        //            case ParagraphBlock:
+        //                // Pictures that is required to use
+        //                QuestionsInitializer.ParseImages((ParagraphBlock)block, quiz[^1], directory);
+        //                // Links for answers, currently I wont use
+        //                break;
+        //            case LinkReferenceDefinitionGroup:
+        //                // Still links just they werent placed inside brackets
+        //                break;
+        //            default:
+        //                break;
+        //        }
+        //    }
+        //    return quiz;
+        //}
 
         static void ParseImages(ParagraphBlock paragraphBlock, Question currentQuestion, string rootDir)
         {

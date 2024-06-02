@@ -4,6 +4,10 @@ using CommunityToolkit.Mvvm.Input;
 using QuizGame.Models;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using System.Linq;
+using Newtonsoft.Json.Linq;
+using Microsoft.VisualStudio.Threading;
+using QuizGame.Helpers;
 
 namespace QuizGame.ViewModels
 {
@@ -13,72 +17,47 @@ namespace QuizGame.ViewModels
         readonly Topics topics;
 
         [ObservableProperty]
-        List<string> selectedTopicNames;
+        public List<string> selectedTopicNames;
 
         // Constructor
         public MainPageViewModel(Topics topics)
         {
-            this.topics = topics;
             selectedTopicNames = [];
+            this.topics = topics;
+            _ = Task.Run(InitAsync);
+        }
+
+        async Task InitAsync() => SelectedTopicNames = await GetNamesAsync();
+
+        async Task<List<string>> GetNamesAsync()
+        {
+            List<(string Path, string Name)> data = await topics.TopicsData;
+            return data.Select(element => element.Name).ToList();
         }
 
         // Methods
+        [RelayCommand]
+        static void Disappearing(SearchBar searchBar) => searchBar.Text = string.Empty;
 
         [RelayCommand]
-        async Task AppearingAsync()
+        async Task PerformSearchAsync(string keyWord)
         {
-            // Data was already read in from file, just set page default
-            if (topics.TopicsData.Count > 0)
-            {
-                return;
-            }
-            else
-            {
-                using Stream stream = await FileSystem.OpenAppPackageFileAsync(topics.TopicsFile);
-                using StreamReader reader = new StreamReader(stream);
-                string content = await reader.ReadToEndAsync();
-                SplitContent2Collection(content);
-            }
-        }
+            // Get all names
+            List<string> names = await GetNamesAsync();
 
-        [RelayCommand]
-        void Disappearing(SearchBar searchBar) => searchBar.Text = string.Empty;
-
-        [RelayCommand]
-        void PerformSearch(string keyWord)
-        {
             // Perform case-insensitive search and add matching names to SelectedNames
-            List<string> searchResult = topics.TopicsData.Select(element => element.Name)
-                                                    .Where(name => name.StartsWith(keyWord, StringComparison.OrdinalIgnoreCase)).ToList();
-            // Reinitialize SelectedTopics only if current result differ from it
-            if (!Enumerable.SequenceEqual(searchResult, SelectedTopicNames))
-            {
-                SelectedTopicNames = searchResult;
-            }
+            List<string> result = names.Where(name => name.StartsWith(keyWord, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            if (!result.Equals(SelectedTopicNames))
+                SelectedTopicNames = new List<string>(result);
         }
 
         [RelayCommand]
         async Task NavigateAsync(string butText)
         {
-            var result = topics.TopicsData.Find(element => element.Name == butText);
+            var tupleList = await topics.TopicsData;
+            var result = tupleList.Find(element => element.Name == butText);
             await Shell.Current.GoToAsync($"{nameof(QuizPage)}?TargetPath={Uri.EscapeDataString(result.Path)}");
-        }
-
-        void SplitContent2Collection(string content)
-        {
-            string[] words = content.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (string word in words) 
-            {
-                string path = word + @"\" + word + "-quiz.md";
-                // Format name
-                TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-                string formattedName = textInfo.ToTitleCase(word.Replace("-", " "));
-                // Add to list
-                topics.TopicsData.Add((path, formattedName));
-            }
-            SelectedTopicNames = topics.TopicsData.Select(element => element.Name).ToList();
-        }
-
-     
+        }     
     }
 }

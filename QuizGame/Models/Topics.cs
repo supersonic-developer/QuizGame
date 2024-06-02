@@ -1,19 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Microsoft.VisualStudio.Threading;
 using QuizGame.Helpers;
-using System.Collections.ObjectModel;
+using QuizGame.Services.Interfaces;
 
 namespace QuizGame.Models
 {
-    public partial class Topics : ObservableObject
+    public class Topics(IAsyncInitializeService<List<(string, string)>> topicsInitializer)
     {
-        // Properties
-        [ObservableProperty]
-        List<(string Path, string Name)> topicsData;
-
-        public Topics()
-        {
-            TopicsData = [];
-            _ = new TopicsInitializer(this);
-        }
+        // Property
+        public JoinableTask<List<(string Path, string Name)>> TopicsData { get; } = JoinableTaskContextHelper.Factory.RunAsync(topicsInitializer.InitializeAsync);
     }
 }

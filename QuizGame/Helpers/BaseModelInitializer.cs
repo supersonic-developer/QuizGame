@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace QuizGame.Helpers
 {
-    public abstract class BaseModelInitializer
+    public abstract class BaseModelInitializer : ObservableObject
     {
-        public static async Task<Stream> OpenStreamAsync(string path) => await FileSystem.OpenAppPackageFileAsync(path);
+        protected abstract Task Initialize { get; set; }
 
-        public static async Task<string> LoadFileAsync(string path)
+        protected static async Task<string> LoadFileAsync(string path)
         {
-            using var stream = await BaseModelInitializer.OpenStreamAsync(path);
+            using var stream = await FileSystem.OpenAppPackageFileAsync(path);
             using var reader = new StreamReader(stream);
             return await reader.ReadToEndAsync();
         }

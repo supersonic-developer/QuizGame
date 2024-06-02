@@ -1,21 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using QuizGame.Services.Interfaces;
+using QuizGame.Helpers;
+using Microsoft.VisualStudio.Threading;
 
 namespace QuizGame.Models
 {
-    public partial class CodeSnippet : ObservableObject
+    public class CodeSnippet(string language, string content)
     {
         // Properties
-        [ObservableProperty]
-        string language;
+        public string Language { get; } = language;
 
-        [ObservableProperty]
-        string content;
-
-        // Parametrizable constructor
-        public CodeSnippet(string language, string content) 
-        {
-            Language = language;
-            Content = content;
-        }
+        public string Content { get; } = content;
     }
 }
