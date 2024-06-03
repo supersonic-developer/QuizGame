@@ -1,6 +1,4 @@
 ﻿using System.Globalization;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Data;
 
 namespace QuizGame.Converters
 {

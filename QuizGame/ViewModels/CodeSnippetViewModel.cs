@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json.Linq;
 using QuizGame.Helpers;
 using QuizGame.Models;
+using QuizGame.Services.Interfaces;
 
 namespace QuizGame.ViewModels
 {
-    public partial class CodeSnippetViewModel : ObservableObject
+    public partial class CodeSnippetViewModel : ObservableObject, IAsyncInitializeService<string>
     {
         // Member variables
         readonly CodeSnippet? codeSnippet;
@@ -14,15 +14,9 @@ namespace QuizGame.ViewModels
 
         readonly HighlightJs? libraries;
 
-        TaskNotifier<string>? html2Display;
-
-
         // Properties
-        public Task<string>? Html2Display
-        {
-            get => html2Display;
-            private set => SetPropertyAndNotifyOnCompletion(ref html2Display, value);
-        }
+        [ObservableProperty]
+        public string? html2Display;
 
         [ObservableProperty]
         bool isVisible;
@@ -40,7 +34,6 @@ namespace QuizGame.ViewModels
             if (codeSnippet == null)
             {
                 IsVisible = false;
-                Html2Display = Task.FromResult(string.Empty);
                 Width = 0;
                 Height = 0;
             }
@@ -50,13 +43,14 @@ namespace QuizGame.ViewModels
                 this.libraries = libraries;
                 IsVisible = true;
                 CalculateSize();
-                Html2Display = InitAsync();
+                _ = Task.Run(async () => Html2Display = await InitializeAsync());
+                Application.Current!.RequestedThemeChanged += (s, e) => _ = Task.Run(async () => Html2Display = await InitializeAsync());
             }
         }
 
 
         // Methods
-        async Task<string> InitAsync()
+        public async Task<string> InitializeAsync()
         {
             // await libraries
             (string highlightJs, string lightStyleCss, string darkStyleCss) = await libraries!.Libraries;

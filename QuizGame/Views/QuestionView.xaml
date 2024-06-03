@@ -6,35 +6,56 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:viewmodel="clr-namespace:QuizGame.ViewModels">
 
-    <VerticalStackLayout>
-        <Label
-            Text="{Binding Question.Text}"
-            Style="{StaticResource SubHeadline}"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-        <Image 
-            Source="{Binding Question.ImagePath}" 
-            Aspect="AspectFit" 
-            HorizontalOptions="Fill"/>
-        <ContentView HorizontalOptions="Center">
-            <local:CodeSnippetView BindingContext="{Binding CodeViewModel}"/>
-        </ContentView>
-        <CollectionView
-            x:Name="answersCollectionView"
-            ItemsSource="{Binding AnswerViewModels}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <HorizontalStackLayout HorizontalOptions="Center">
+    <ScrollView>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Frame 
+                Grid.Row="0"
+                BackgroundColor="{AppThemeBinding Dark={StaticResource Black}, Light={StaticResource Primary}}"
+                   CornerRadius="30"
+                   Margin="10,10,10,10">
+                <Label
+                        Text="{Binding Question.Text}"
+                        Style="{StaticResource SubHeadline}"
+                        VerticalOptions="Center" 
+                        HorizontalOptions="Center" />
+            </Frame>
+            <Image 
+                Grid.Row="1"
+                Source="{Binding Question.ImagePath}" 
+                Aspect="AspectFit"/>
 
-                        <CheckBox VerticalOptions="Center" />
+            <ContentView 
+                Grid.Row="2"
+                HorizontalOptions="Center">
+                <local:CodeSnippetView BindingContext="{Binding CodeViewModel}"/>
+            </ContentView>
 
-                        <ContentView VerticalOptions="Center">
+            <CollectionView
+                    Grid.Row="3"
+                    ItemsSource="{Binding AnswerViewModels}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <ContentView>
                             <local:AnswerView BindingContext="{Binding .}"/>
                         </ContentView>
-                        
-                    </HorizontalStackLayout>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </VerticalStackLayout>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button 
+                Grid.Row="4"
+                Text="Check Answer"
+                Command="{Binding NextCommand}"
+                CommandParameter="{Binding ., Source={RelativeSource Self}}"/>
+        </Grid>
+    </ScrollView>
 </ContentView>

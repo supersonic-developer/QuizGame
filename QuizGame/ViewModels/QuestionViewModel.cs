@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using QuizGame.Helpers;
 using QuizGame.Models;
 using System.Collections.ObjectModel;
 
@@ -13,24 +14,36 @@ namespace QuizGame.ViewModels
         [ObservableProperty]
         CodeSnippetViewModel codeViewModel;
 
-        [ObservableProperty]
-        ObservableCollection<AnswerViewModel> answerViewModels;
+        public ObservableCollection<AnswerViewModel> AnswerViewModels { get; }
 
-        public QuestionViewModel(Question question)
+        public QuestionViewModel(List<Question> questions, HighlightJs highlightJs)
         {
-            Question = question;
-            CodeViewModel = new CodeSnippetViewModel(question.CodeBlock);
-            AnswerViewModels = new ObservableCollection<AnswerViewModel>();
+            // Set view model properties
+            Question = RandomElementAndRemove(questions);
+            CodeViewModel = new CodeSnippetViewModel(question.CodeBlock, highlightJs);
+            AnswerViewModels = [];
             foreach (Answer answer in Question.Answers)
             {
-                AnswerViewModels.Add(new AnswerViewModel(answer));
+                AnswerViewModels.Add(new AnswerViewModel(answer, new CodeSnippetViewModel(answer.CodeBlock, highlightJs)));
             }
         }
 
-        [RelayCommand]
-        void CheckedChanged(CollectionView collectionView)
+        static Question RandomElementAndRemove(List<Question> questions)
         {
-            int stop = 1;
+            //Random random = new();
+            Question randQuestion = questions[1];
+            questions.Remove(randQuestion);
+            return randQuestion;
+        }
+
+        [RelayCommand]
+        void Next(Button button)
+        {
+            button.Text = "Next";
+            foreach (AnswerViewModel answerViewModel in AnswerViewModels)
+            {
+                answerViewModel.IsDisplayed = true;
+            }
         }
     }
 }

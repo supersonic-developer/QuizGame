@@ -7,7 +7,6 @@
             InitializeComponent();
 
             MainPage = new AppShell();
-            Routing.RegisterRoute(nameof(QuizPage), typeof(QuizPage));
         }
     }
 }

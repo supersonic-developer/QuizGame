@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QuizGame.Views.TopicsView"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:viewmodel="clr-namespace:QuizGame.ViewModels">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
+        
+        <SearchBar 
+            Grid.Row="0"
+            x:Name="searchBar" 
+            Placeholder="Search topic..."  
+            Margin="10, 10, 10, 10" 
+            WidthRequest="300">
+            <SearchBar.Behaviors>
+                <toolkit:EventToCommandBehavior
+                    EventName="TextChanged"
+                    Command="{Binding PerformSearchCommand}"
+                    CommandParameter="{Binding Text, Source={x:Reference searchBar}}"/>
+            </SearchBar.Behaviors>
+        </SearchBar>
+
+        <CollectionView 
+            Grid.Row="1"
+            ItemsSource="{Binding SelectedTopicNames}"
+            WidthRequest="230"
+            Margin="0, 5, 0, 5"
+            EmptyView="No result was found">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Button
+                        Text="{Binding .}"
+                        Command="{Binding NavigateCommand, Source={RelativeSource AncestorType={x:Type viewmodel:TopicsViewModel}}}"
+                        CommandParameter="{Binding Text, Source={RelativeSource Self}}"
+                        Margin="0,5,0,5"/>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+    </Grid>
+</ContentView>

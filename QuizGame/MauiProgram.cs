@@ -5,6 +5,7 @@ using CommunityToolkit.Maui;
 using QuizGame.Services.Interfaces;
 using QuizGame.Services.Implementations;
 using QuizGame.Helpers;
+using QuizGame.Views;
 
 namespace QuizGame
 {
@@ -20,9 +21,9 @@ namespace QuizGame
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 })
-                .UseMauiCommunityToolkit()
-                .ConfigureServices();
+                .UseMauiCommunityToolkit();
 
+            builder.ConfigureServices();
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
@@ -33,11 +34,13 @@ namespace QuizGame
 
         // Services configuration methods
 
-        static void ConfigureServices(this MauiAppBuilder builder)
+        static MauiAppBuilder ConfigureServices(this MauiAppBuilder builder)
         {
-            builder.Services.AddServices()
-                            .AddViewModels()
-                            .AddViews();
+            builder.Services.AddServices();
+            builder.Services.AddViewModels();
+            builder.Services.AddViews();
+
+            return builder;
         }
 
         static IServiceCollection AddServices(this IServiceCollection services)
@@ -53,20 +56,33 @@ namespace QuizGame
             services.AddSingleton<IAsyncInitializeService<(string, string, string)>, AsyncInitializeHighlightJsService>();
             services.AddSingleton<HighlightJs>();
 
+            // Questions service
+            services.AddSingleton<IAsyncInitializeService<List<Question>>, AsyncInitializeQuestionsService>();
+            services.AddSingleton<List<Question>>();
+
             return services;
         }
 
         static IServiceCollection AddViewModels(this IServiceCollection services)
         {
-            services.AddSingleton<MainPageViewModel>();
-            services.AddTransient<QuizViewModel>();
+            services.AddSingleton<TopicsViewModel>();
+            services.AddTransient<HeaderViewModel>();
+            services.AddTransient<QuestionViewModel>();
+
             return services;
         }
 
         static IServiceCollection AddViews(this IServiceCollection services)
         {
+            // Singletons
             services.AddSingleton<MainPage>();
+            services.AddSingleton<HeaderView>();
+            services.AddSingleton<TopicsView>();
+
+            // Transients
             services.AddTransient<QuizPage>();
+            services.AddTransient<QuestionView>();
+
             return services;
         }
     }

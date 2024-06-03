@@ -3,75 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:viewmodel="clr-namespace:QuizGame.ViewModels"
+             xmlns:views="clr-namespace:QuizGame.Views"
              x:Class="QuizGame.MainPage">
 
-    <ContentPage.Behaviors>
-        <toolkit:EventToCommandBehavior
-            EventName="Disappearing"
-            Command="{Binding DisappearingCommand}"
-            CommandParameter="{Binding ., Source={x:Reference searchBar}}"/>
-    </ContentPage.Behaviors>
+    <Grid BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
 
-
-    <Grid 
-        BackgroundColor="{StaticResource OffBlack}">
-        
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
-        <VerticalStackLayout
-            Grid.Row="0"
-            Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Black}}">
-            <HorizontalStackLayout
-                Spacing="0"
-                HorizontalOptions="Center">
-                <Label
-                    Text="Linked"
-                    Style="{StaticResource Headline}"
-                    VerticalOptions="Center"/>
-                <Image
-                    Source="linkedin_logo.png"/>
-            </HorizontalStackLayout>
-            <Label
-                Text="Skill assessment quizzes"
-                Style="{StaticResource Headline}"/>
-        </VerticalStackLayout>
 
+        <Grid Grid.Row="0">
+            <ContentView>
+                <views:HeaderView x:Name="headerView"/>
+            </ContentView>
+        </Grid>
 
-        <SearchBar 
-            Grid.Row="1"
-            x:Name="searchBar" 
-            Placeholder="Search topic..."  
-            Margin="10, 10, 10, 10" 
-            WidthRequest="300">
-            <SearchBar.Behaviors>
-                <toolkit:EventToCommandBehavior
-                    EventName="TextChanged"
-                    Command="{Binding PerformSearchCommand}"
-                    CommandParameter="{Binding Text, Source={x:Reference searchBar}}"/>
-            </SearchBar.Behaviors>
-        </SearchBar>
-            
-        <CollectionView 
-            Grid.Row="2"
-            ItemsSource="{Binding SelectedTopicNames}"
-            WidthRequest="230"
-            Margin="0, 5, 0, 5"
-            EmptyView="No result was found">
-            
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Button
-                        Text="{Binding .}"
-                        Command="{Binding NavigateCommand, Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}}"
-                        CommandParameter="{Binding Text, Source={RelativeSource Self}}"
-                        Margin="0,5,0,5"/>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-                
-        </CollectionView>
+        <Grid Grid.Row="1">
+            <ContentView>
+                <views:TopicsView x:Name="topicsView"/>
+            </ContentView>
+        </Grid>
     </Grid>
 </ContentPage>

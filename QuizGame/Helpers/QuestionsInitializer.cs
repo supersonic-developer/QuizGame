@@ -1,77 +1,57 @@
 ﻿using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
-using Microsoft.VisualStudio.Threading;
 using QuizGame.Models;
 
 namespace QuizGame.Helpers
 {
-    public class QuestionsInitializer 
+    public class QuestionsInitializer
     {
-        // File path
-        readonly string currentPath;
-
-        // Async lazy object to run initialization asynchronously
-        public AsyncLazy<List<Question>> AsyncLazyQuestionsReader { get; }
-
-        // Constructor
-        public QuestionsInitializer(string path)
-        { 
-            currentPath = path;
-            AsyncLazyQuestionsReader = new(ParseQuestionsAsync, new JoinableTaskContext().Factory);
-        }
-
         // Parser functions
-        public async Task<List<Question>> ParseQuestionsAsync() => new List<Question>();
-        //{
-        //    // Read in file as plain text
-        //    string sourceText = await BaseModelInitializer.LoadFileAsync(currentPath);
+        public static List<Question> ParseQuestions(string mdText, string directory)
+        {
+            // Parse the text 
+            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+            var document = Markdown.Parse(mdText, pipeline);
 
-        //    // Get directory of .md file
-        //    string directory = currentPath[..currentPath.LastIndexOf('\\')] ?? throw new Exception("Failed to get directory of given file path.");
+            // Create the list for questions
+            List<Question> quiz = [];
+            // Auxiliary variable for process
+            bool isReadingQuestion = false;
 
-        //    // Parse the text 
-        //    var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-        //    var document = Markdown.Parse(sourceText, pipeline);
-
-        //    // Create the list for questions
-        //    List<Question> quiz = [];
-        //    // Auxiliary variable for process
-        //    bool isReadingQuestion = false;
-
-        //    // Traverse the AST and process the content
-        //    foreach (var block in document)
-        //    {
-        //        switch (block)
-        //        {
-        //            case HeadingBlock:
-        //                isReadingQuestion = true;
-        //                // Parse heading to question
-        //                Question? currentQuestion = ParseQuestion((HeadingBlock)block, quiz);
-        //                break;
-        //            case ListBlock:
-        //                isReadingQuestion = false;
-        //                // Add answer(s) to question
-        //                ParseAnswer((ListBlock)block, quiz[^1]);
-        //                break;
-        //            case FencedCodeBlock:
-        //                // Parse code block and add to question or answer
-        //                QuestionsInitializer.ParseCodeSnippet((FencedCodeBlock)block, quiz[^1], isReadingQuestion);
-        //                break;
-        //            case ParagraphBlock:
-        //                // Pictures that is required to use
-        //                QuestionsInitializer.ParseImages((ParagraphBlock)block, quiz[^1], directory);
-        //                // Links for answers, currently I wont use
-        //                break;
-        //            case LinkReferenceDefinitionGroup:
-        //                // Still links just they werent placed inside brackets
-        //                break;
-        //            default:
-        //                break;
-        //        }
-        //    }
-        //    return quiz;
-        //}
+            // Traverse the AST and process the content
+            foreach (var block in document)
+            {
+                switch (block)
+                {
+                    case HeadingBlock:
+                        isReadingQuestion = true;
+                        // Parse heading to question
+                        ParseQuestion((HeadingBlock)block, quiz);
+                        break;
+                    case ListBlock:
+                        isReadingQuestion = false;
+                        // Add answer(s) to question
+                        ParseAnswer((ListBlock)block, quiz[^1], directory);
+                        break;
+                    case FencedCodeBlock:
+                        // Parse code block and add to question or answer
+                        ParseCodeSnippet((FencedCodeBlock)block, quiz[^1], isReadingQuestion);
+                        break;
+                    case ParagraphBlock:
+                        // Pictures that is required to use
+                        ParseImages((ParagraphBlock)block, quiz[^1], directory);
+                        // Links for answers, currently I wont use
+                        break;
+                    case LinkReferenceDefinitionGroup:
+                        // Still links just they werent placed inside brackets
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return quiz;
+        }
 
         static void ParseImages(ParagraphBlock paragraphBlock, Question currentQuestion, string rootDir)
         {
@@ -83,19 +63,19 @@ namespace QuizGame.Helpers
                 {
                     if (linkInline.IsImage)
                     {
-                        currentQuestion.ImagePath = rootDir + @"\" + linkInline.Url?.Replace("/", @"\").Replace("?raw=true", "").Replace("?raw=png", "");
+                        currentQuestion.ImagePath = rootDir + @"/" + linkInline.Url?.Replace(@"\?raw=[^\.]*\.", ".");
                     }
                 }
             }
         }
 
         // Parse heading to question, if it is not a question (4 level heading) then returns null
-        static Question? ParseQuestion(HeadingBlock headingBlock, List<Question> quiz)
+        static void ParseQuestion(HeadingBlock headingBlock, List<Question> quiz)
         {
             if (headingBlock.Level == 4)
             {
                 if (headingBlock.Inline is null)
-                    return null;
+                    return;
                 string? question = null;
                 foreach (var descendant in headingBlock.Inline.Descendants())
                 {
@@ -104,29 +84,37 @@ namespace QuizGame.Helpers
                     else if (descendant is CodeInline descendantCode)
                         question += descendantCode.Content.ToString();
                 }
-                quiz.Add(new Question(question ?? throw new Exception("There is no question.")));
+                quiz.Add(new Question(question ?? throw new Exception("There is no question."), []));
             }
-            return null;
         }
 
         // Parse listblock to answer(s) and add it to the question
-        static void ParseAnswer(ListBlock listBlock, Question currentQuestion)
+        static void ParseAnswer(ListBlock listBlock, Question currentQuestion, string rootDir)
         {
             foreach (ListItemBlock listItemBlock in listBlock.Cast<ListItemBlock>())
             {
-                if (listItemBlock.LastChild is ParagraphBlock paragraphBlock)
+                foreach (var listItem in listItemBlock.Descendants())
                 {
-                    if (paragraphBlock.Inline?.FirstChild is Markdig.Extensions.TaskLists.TaskList taskList)
+                    if (listItem is ParagraphBlock paragraphBlock)
                     {
-                        string answer = "";
-                        foreach (var descendant in paragraphBlock.Inline.Descendants())
+                        if (paragraphBlock.Inline?.FirstChild is Markdig.Extensions.TaskLists.TaskList taskList)
                         {
-                            if (descendant is LiteralInline && descendant.ToString() != " :")
-                                answer += descendant.ToString();
-                            else if (descendant is CodeInline descendantCode)
-                                answer += descendantCode.Content.ToString();
+                            string answer = "";
+                            string? imagePath = null;
+                            foreach (var descendant in paragraphBlock.Inline.Descendants())
+                            {
+                                if (descendant is LiteralInline && descendant.ToString() != " :")
+                                    answer += descendant.ToString();
+                                else if (descendant is CodeInline descendantCode)
+                                    answer += descendantCode.Content.ToString();
+                                else if (descendant is LinkInline linkInline)
+                                {
+                                    if (linkInline.IsImage)
+                                        imagePath = rootDir + @"/" + linkInline.Url?.Replace(@"\?raw=[^\.]*\.", ".");
+                                }
+                            }
+                            currentQuestion.Answers.Add(new Answer(answer, taskList.Checked, null, imagePath));
                         }
-                        currentQuestion.Answers.Add(new Answer(answer, taskList.Checked));
                     }
                 }
             }

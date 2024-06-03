@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QuizGame.Views.HeaderView">
+    
+    <Grid Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Black}}"
+          VerticalOptions="Start">
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <HorizontalStackLayout
+            Grid.Row="0"
+            Spacing="0"
+            HorizontalOptions="Center">
+            <Label
+                Text="{Binding Title}"
+                Style="{StaticResource Headline}"
+                VerticalOptions="Center"/>
+            <Image
+                Source="{Binding ImagePath}"/>
+        </HorizontalStackLayout>
+        <Label
+            Grid.Row="1"
+            Text="{Binding Subtitle}"
+            Style="{StaticResource Headline}" />
+    </Grid>
+</ContentView>

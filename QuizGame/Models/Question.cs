@@ -1,28 +1,15 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
-
+﻿
 namespace QuizGame.Models
 {
-    public partial class Question : ObservableObject
+    public class Question(string text, List<Answer> answers, CodeSnippet? codeSnippet = null, string? imagePath = null)
     {
         // Properties
-        [ObservableProperty]
-        string text;
+        public string Text { get; set; } = text;
 
-        [ObservableProperty]
-        List<Answer> answers;
+        public List<Answer> Answers { get; set; } = answers;
 
-        [ObservableProperty]
-        CodeSnippet? codeBlock;
+        public CodeSnippet? CodeBlock { get; set; } = codeSnippet;
 
-        [ObservableProperty]
-        string? imagePath;
-
-        // Constructor
-        public Question(string text) 
-        {
-            Text = text;
-            Answers = [];
-        }
+        public string? ImagePath { get; set; } = imagePath;
     }
 }

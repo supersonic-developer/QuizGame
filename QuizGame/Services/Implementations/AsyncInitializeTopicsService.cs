@@ -26,7 +26,7 @@ namespace QuizGame.Services.Implementations
             // Build data
             foreach (string word in words)
             {
-                string path = @"linkedin-skill-assessments-quizzes\" + word + @"\" + word + "-quiz.md";
+                string path = @"linkedin-skill-assessments-quizzes/" + word + @"/" + word + "-quiz.md";
                 // Format name
                 TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
                 string formattedName = textInfo.ToTitleCase(word.Replace("-", " "));

@@ -3,18 +3,15 @@ using QuizGame.Models;
 
 namespace QuizGame.ViewModels
 {
-    public partial class AnswerViewModel : ObservableObject
+    public partial class AnswerViewModel(Answer answer, CodeSnippetViewModel? codeSnippetViewModel = null) : ObservableObject
     {
         [ObservableProperty]
-        Answer answer;
+        Answer answer = answer;
 
         [ObservableProperty]
-        CodeSnippetViewModel codeSnippetViewModel;
+        CodeSnippetViewModel? codeSnippetViewModel = codeSnippetViewModel;
 
-        public AnswerViewModel(Answer answer) 
-        {
-            Answer = answer;
-            codeSnippetViewModel = new CodeSnippetViewModel(answer.CodeBlock);
-        }
+        [ObservableProperty]
+        bool isDisplayed = false;
     }
 }

@@ -2,13 +2,42 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="QuizGame.Views.AnswerView"
-             xmlns:local="clr-namespace:QuizGame.Views">
+             xmlns:local="clr-namespace:QuizGame.Views"
+             xmlns:converts="clr-namespace:QuizGame.Converters">
 
-    <VerticalStackLayout>
-        <Label 
-            Text="{Binding Answer.Text}"/>
-        <ContentView>
+   
+    <Grid
+        Grid.Row="3"
+        HorizontalOptions="Fill">
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Frame
+            Grid.Row="0"
+            CornerRadius="25"
+            BackgroundColor="{Binding Answer.IsCorrect, Converter={converts:IsAnswerDisplay}}"
+            Margin="5,10,5,10">
+            <RadioButton
+                Content="{Binding Answer.Text}"
+                TextColor="{StaticResource White}"
+                GroupName="Answers"
+                HorizontalOptions="Start"/>
+        </Frame>
+
+
+        <Image
+            Grid.Row="1"
+            Source="{Binding Answer.ImagePath}"
+            Aspect="AspectFit"/>
+
+        <ContentView
+            Grid.Row="2">
             <local:CodeSnippetView BindingContext="{Binding CodeSnippetViewModel}"/>
         </ContentView>
-    </VerticalStackLayout>
+
+    </Grid>    
 </ContentView>

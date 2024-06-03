@@ -61,7 +61,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Resources\Images\linkedin_logo.png" />
 	  <None Remove="Resources\linkedin-skill-assessments-quizzes\adobe-lightroom\adobe-lightroom-ch.md" />
 	</ItemGroup>
 
@@ -80,6 +79,9 @@
 	  <Compile Update="Views\AnswerView.xaml.cs">
 	    <DependentUpon>AnswerView.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\HeaderView.xaml.cs">
+	    <DependentUpon>HeaderView.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\QuestionView.xaml.cs">
 	    <DependentUpon>QuestionView.xaml</DependentUpon>
 	  </Compile>
@@ -92,7 +94,13 @@
 	  <MauiXaml Update="Views\CodeSnippetView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\HeaderView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\QuestionView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\TopicsView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

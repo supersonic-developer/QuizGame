@@ -1,27 +1,14 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace QuizGame.Models
 {
-    public partial class Answer : ObservableObject
+    public class Answer(string text, bool isCorrect, CodeSnippet? codeSnippet = null, string? imagePath = null)
     {
-        [ObservableProperty]
-        string text;
+        public string Text { get; } = text;
 
-        [ObservableProperty]
-        bool isCorrect;
+        public bool IsCorrect { get; } = isCorrect;
 
-        [ObservableProperty]
-        CodeSnippet? codeBlock;
+        public CodeSnippet? CodeBlock { get; set; } = codeSnippet;
 
-        public Answer(string text, bool isCorrect) 
-        { 
-            Text = text;
-            IsCorrect = isCorrect;
-        }
+        public string? ImagePath { get; set; } = imagePath;
     }
 }
