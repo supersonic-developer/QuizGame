@@ -7,19 +7,21 @@ namespace QuizGame.ViewModels
 {
     public partial class TopicsViewModel : ObservableObject
     {
-        // Member variable
+        // Models and services
         readonly Topics topics;
+        readonly IAsyncInitializeService<List<Question>> questionsService;
+        readonly List<Question> questions;
 
+        // Bindable properties
         [ObservableProperty]
         List<string> selectedTopicNames;
 
         [ObservableProperty]
         bool isLoading = false;
 
+        // Cancellation token source for asynchronous search
         CancellationTokenSource cts = new();
-        readonly IAsyncInitializeService<List<Question>> questionsService;
-
-        readonly List<Question> questions;
+        
 
         // Constructor
         public TopicsViewModel(Topics topics, IAsyncInitializeService<List<Question>> questionsService, List<Question> questions)
@@ -33,9 +35,11 @@ namespace QuizGame.ViewModels
             this.questions = questions;
         }
 
-        List<string> GetNames() => new(topics.TopicsData.Select(element => element.Name));
+        // Method to query all topic names
+        List<string> GetNames() => topics.TopicsData.Select(element => element.Name).ToList();
 
-        // Methods
+        
+        // Commands
         [RelayCommand]
         static void Disappearing(SearchBar searchBar) => searchBar.Text = string.Empty;
 
@@ -53,7 +57,11 @@ namespace QuizGame.ViewModels
                     List<string> names = GetNames();
 
                     // Perform case-insensitive search and add matching names to SelectedNames
-                    List<string> result = names.Where(name => name.StartsWith(keyWord, StringComparison.OrdinalIgnoreCase)).ToList();
+                    List<string> result = names.Where(name => 
+                    {
+                        cts.Token.ThrowIfCancellationRequested();
+                        return name.StartsWith(keyWord, StringComparison.OrdinalIgnoreCase);
+                    }).ToList();
 
                     if (!result.SequenceEqual(SelectedTopicNames))
                     {
@@ -61,7 +69,7 @@ namespace QuizGame.ViewModels
                     }
                 }
                 catch(OperationCanceledException) { }
-            }, cts.Token);
+            });
         }
 
         [RelayCommand]
@@ -71,10 +79,7 @@ namespace QuizGame.ViewModels
             topics.SelectedTopicIdx = topics.TopicsData.FindIndex(element => element.Name == butText);
             List<Question> readQuestions = await questionsService.InitializeAsync();
             questions.Clear();
-            foreach (Question question in readQuestions)
-            {
-                questions.Add(question);
-            }
+            questions.AddRange(readQuestions);
             await Shell.Current.GoToAsync($"{nameof(QuizPage)}");
             IsLoading = false;
         }     

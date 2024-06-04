@@ -6,30 +6,21 @@ namespace QuizGame.Converters
     {
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo cultureInfo)
         {
-            bool isAnswerDisplayed = (bool)value!;
-            switch (Application.Current?.RequestedTheme)
+            if ((bool)value!)
             {
-                case AppTheme.Light:
-                    if (isAnswerDisplayed)
-                    {
-                        return Colors.Green;
-                    }
-                    else
-                    {
+                return Colors.Green;
+            }
+            else
+            {
+                switch (Application.Current?.RequestedTheme)
+                {
+                    case AppTheme.Light:
                         return Color.FromRgb(80, 43, 212);
-                    }
-                    
-                case AppTheme.Dark:
-                    if (isAnswerDisplayed)
-                    {
-                        return Colors.Green;
-                    }
-                    else
-                    {
+                    case AppTheme.Dark:
                         return Colors.Black;
-                    }
-                default:
-                    return Colors.White;
+                    default:
+                        return Colors.White;
+                }
             }
         }
 

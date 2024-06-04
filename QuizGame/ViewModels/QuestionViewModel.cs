@@ -2,24 +2,28 @@
 using CommunityToolkit.Mvvm.Input;
 using QuizGame.Helpers;
 using QuizGame.Models;
-using System.Collections.ObjectModel;
 
 namespace QuizGame.ViewModels
 {
     public partial class QuestionViewModel : ObservableObject
     {
+        // Bindable properties
         [ObservableProperty]
-        Question question;
+        Question displayedQuestion;
 
         [ObservableProperty]
         CodeSnippetViewModel codeViewModel;
 
         public ObservableCollection<AnswerViewModel> AnswerViewModels { get; }
 
+        bool isAnswerShown;
+
+
+        // Constructor
         public QuestionViewModel(List<Question> questions, HighlightJs highlightJs)
         {
             // Set view model properties
-            Question = RandomElementAndRemove(questions);
+            DisplayedQuestion = RandomElementAndRemove(questions);
             CodeViewModel = new CodeSnippetViewModel(question.CodeBlock, highlightJs);
             AnswerViewModels = [];
             foreach (Answer answer in Question.Answers)
@@ -28,21 +32,35 @@ namespace QuizGame.ViewModels
             }
         }
 
+
+        // Method to get a random element from a list and remove it
         static Question RandomElementAndRemove(List<Question> questions)
         {
-            //Random random = new();
-            Question randQuestion = questions[1];
+            Random random = new();
+            Question randQuestion = questions[random.Next(questions.Count)];
             questions.Remove(randQuestion);
             return randQuestion;
         }
 
+
+        // Commands
         [RelayCommand]
-        void Next(Button button)
+        async Task Next(Button button)
         {
-            button.Text = "Next";
-            foreach (AnswerViewModel answerViewModel in AnswerViewModels)
+            if (isAnswerShown)
+            {            
+                await Shell.Current.GoToAsync($"{nameof(QuizPage)}");
+            }
+            else
             {
-                answerViewModel.IsDisplayed = true;
+                isAnswerShown = true;
+                // Change the text of button
+                button.Text = "Next";
+                // Copy correctness into binded property
+                foreach (AnswerViewModel answerViewModel in AnswerViewModels)
+                {
+                    answerViewModel.IsDisplayed = answerViewModel.Answer.IsCorrect;
+                }
             }
         }
     }

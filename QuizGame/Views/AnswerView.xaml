@@ -19,13 +19,13 @@
         <Frame
             Grid.Row="0"
             CornerRadius="25"
-            BackgroundColor="{Binding Answer.IsCorrect, Converter={converts:IsAnswerDisplay}}"
+            BackgroundColor="{Binding IsDisplayed, Converter={converts:IsAnswerDisplay}}"
             Margin="5,10,5,10">
             <RadioButton
                 Content="{Binding Answer.Text}"
                 TextColor="{StaticResource White}"
                 GroupName="Answers"
-                HorizontalOptions="Start"/>
+                HorizontalOptions="Fill"/>
         </Frame>
 
 
