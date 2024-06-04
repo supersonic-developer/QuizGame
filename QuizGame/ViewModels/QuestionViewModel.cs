@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using QuizGame.Helpers;
 using QuizGame.Models;
+using System.Collections.ObjectModel;
 
 namespace QuizGame.ViewModels
 {
@@ -14,19 +15,33 @@ namespace QuizGame.ViewModels
         [ObservableProperty]
         CodeSnippetViewModel codeViewModel;
 
+        [ObservableProperty]
+        bool isLoading = false;
+
         public ObservableCollection<AnswerViewModel> AnswerViewModels { get; }
 
         bool isAnswerShown;
 
+        void SetHeader(HeaderViewModel headerViewModel, Topics topics)
+        {
+            headerViewModel.Title = topics.TopicsData[(int)topics.SelectedTopicIdx!].Name;
+            headerViewModel.Subtitle = "";
+            headerViewModel.ImagePath = "";
+            headerViewModel.HomeImagePath = "home_icon.png";
+        }
+
 
         // Constructor
-        public QuestionViewModel(List<Question> questions, HighlightJs highlightJs)
+        public QuestionViewModel(Topics topics, List<Question> questions, HighlightJs highlightJs, HeaderViewModel headerViewModel)
         {
+            // Set header view model
+            SetHeader(headerViewModel, topics);
+
             // Set view model properties
             DisplayedQuestion = RandomElementAndRemove(questions);
-            CodeViewModel = new CodeSnippetViewModel(question.CodeBlock, highlightJs);
+            CodeViewModel = new CodeSnippetViewModel(displayedQuestion.CodeBlock, highlightJs);
             AnswerViewModels = [];
-            foreach (Answer answer in Question.Answers)
+            foreach (Answer answer in displayedQuestion.Answers)
             {
                 AnswerViewModels.Add(new AnswerViewModel(answer, new CodeSnippetViewModel(answer.CodeBlock, highlightJs)));
             }
@@ -45,8 +60,9 @@ namespace QuizGame.ViewModels
 
         // Commands
         [RelayCommand]
-        async Task Next(Button button)
+        async Task NextAsync(Button button)
         {
+            IsLoading = true;
             if (isAnswerShown)
             {            
                 await Shell.Current.GoToAsync($"{nameof(QuizPage)}");
@@ -62,6 +78,7 @@ namespace QuizGame.ViewModels
                     answerViewModel.IsDisplayed = answerViewModel.Answer.IsCorrect;
                 }
             }
+            IsLoading = false;
         }
     }
 }

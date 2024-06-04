@@ -61,6 +61,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\home_icon.png" />
 	  <None Remove="Resources\linkedin-skill-assessments-quizzes\adobe-lightroom\adobe-lightroom-ch.md" />
 	</ItemGroup>
 

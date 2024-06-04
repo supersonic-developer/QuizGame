@@ -12,5 +12,8 @@ namespace QuizGame.ViewModels
 
         [ObservableProperty]
         string imagePath = "";
+
+        [ObservableProperty]
+        string homeImagePath = "";
     }
 }

@@ -21,11 +21,20 @@ namespace QuizGame.ViewModels
 
         // Cancellation token source for asynchronous search
         CancellationTokenSource cts = new();
-        
+
+        void SetHeader(HeaderViewModel headerViewModel)
+        {
+            headerViewModel.Title = "Linked";
+            headerViewModel.Subtitle = " Quizzes";
+            headerViewModel.ImagePath = "linkedin_logo.png";
+            headerViewModel.HomeImagePath = "";
+        }
+
 
         // Constructor
-        public TopicsViewModel(Topics topics, IAsyncInitializeService<List<Question>> questionsService, List<Question> questions)
+        public TopicsViewModel(Topics topics, IAsyncInitializeService<List<Question>> questionsService, List<Question> questions, HeaderViewModel headerViewModel)
         {
+            SetHeader(headerViewModel);
             // Set topics data
             this.topics = topics;
             SelectedTopicNames = GetNames();

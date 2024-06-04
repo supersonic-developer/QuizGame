@@ -15,6 +15,9 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
+            
             <Frame 
                 Grid.Row="0"
                 BackgroundColor="{AppThemeBinding Dark={StaticResource Black}, Light={StaticResource Primary}}"

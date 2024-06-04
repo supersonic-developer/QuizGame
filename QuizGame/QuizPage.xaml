@@ -5,8 +5,7 @@
              xmlns:views="clr-namespace:QuizGame.Views"
              x:Class="QuizGame.QuizPage">
 
-    <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}"
-          VerticalOptions="Fill">
+    <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}">
 
         <ContentView>
             <views:QuestionView x:Name="questionView"/>

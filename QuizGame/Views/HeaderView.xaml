@@ -2,29 +2,41 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="QuizGame.Views.HeaderView">
-    
-    <Grid Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Black}}"
-          VerticalOptions="Start">
-        
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        
+
+    <Grid Background="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Black}}">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
         <HorizontalStackLayout
-            Grid.Row="0"
-            Spacing="0"
+            Grid.Column="0"
             HorizontalOptions="Center">
+
             <Label
                 Text="{Binding Title}"
+                HorizontalOptions="Center"
                 Style="{StaticResource Headline}"
                 VerticalOptions="Center"/>
+        
             <Image
+                HorizontalOptions="Center"
                 Source="{Binding ImagePath}"/>
+
+            <Label
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Text="{Binding Subtitle}"
+                Style="{StaticResource Headline}" />
+
         </HorizontalStackLayout>
-        <Label
-            Grid.Row="1"
-            Text="{Binding Subtitle}"
-            Style="{StaticResource Headline}" />
+
+        <Button
+            Grid.Column="1">
+            <Button.ImageSource>
+                <FileImageSource File="{Binding HomeImagePath}"/>
+            </Button.ImageSource>
+        </Button>
     </Grid>
 </ContentView>

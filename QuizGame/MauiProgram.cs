@@ -66,7 +66,7 @@ namespace QuizGame
         static IServiceCollection AddViewModels(this IServiceCollection services)
         {
             services.AddSingleton<TopicsViewModel>();
-            services.AddTransient<HeaderViewModel>();
+            services.AddSingleton<HeaderViewModel>();
             services.AddTransient<QuestionViewModel>();
 
             return services;
@@ -74,14 +74,10 @@ namespace QuizGame
 
         static IServiceCollection AddViews(this IServiceCollection services)
         {
-            // Singletons
+            // Main page
             services.AddSingleton<MainPage>();
-            services.AddSingleton<HeaderView>();
-            services.AddSingleton<TopicsView>();
-
-            // Transients
+            // Question page
             services.AddTransient<QuizPage>();
-            services.AddTransient<QuestionView>();
 
             return services;
         }

@@ -77,7 +77,7 @@ namespace QuizGame.ViewModels
                 }
             }
 
-            Width = (10*maxCharacters + 15 > 400) ? 400 : 10 * maxCharacters + 15;
+            Width = (10*maxCharacters + 15 > 390) ? 390 : 10 * maxCharacters + 15;
             Height = 15*lines.Length + 50;
         }
     }
