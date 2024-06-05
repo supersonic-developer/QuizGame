@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using QuizGame.ViewModels;
+using System.Globalization;
 
 namespace QuizGame.Converters
 {
@@ -6,22 +7,16 @@ namespace QuizGame.Converters
     {
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo cultureInfo)
         {
-            if ((bool)value!)
+            AnswerViewModel.State state = (AnswerViewModel.State)value!;
+            return state switch
             {
-                return Colors.Green;
-            }
-            else
-            {
-                switch (Application.Current?.RequestedTheme)
-                {
-                    case AppTheme.Light:
-                        return Color.FromRgb(80, 43, 212);
-                    case AppTheme.Dark:
-                        return Colors.Black;
-                    default:
-                        return Colors.White;
-                }
-            }
+                AnswerViewModel.State.LightTheme => Color.FromArgb("#512BD4"),
+                AnswerViewModel.State.DarkTheme => Colors.Black,
+                AnswerViewModel.State.IsSelected => Colors.LightSkyBlue,
+                AnswerViewModel.State.InCorrectDisplayed => Colors.Red,
+                AnswerViewModel.State.CorrectDisplayed => Colors.Green,
+                _ => throw new NotImplementedException(),
+            };
         }
 
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo cultureInfo)

@@ -1,14 +1,12 @@
-﻿using QuizGame.ViewModels;
-
-namespace QuizGame
+﻿namespace QuizGame
 {
     public partial class App : Application
     {
-        public App(HeaderViewModel headerViewModel)
+        public App()
         {
             InitializeComponent();
 
-            MainPage = new AppShell(headerViewModel);
+            MainPage = new AppShell();
         }
     }
 }

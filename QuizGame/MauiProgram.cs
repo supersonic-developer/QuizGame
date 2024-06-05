@@ -1,11 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
-using QuizGame.Models;
-using QuizGame.ViewModels;
-using CommunityToolkit.Maui;
-using QuizGame.Services.Interfaces;
-using QuizGame.Services.Implementations;
+﻿using CommunityToolkit.Maui;
+using Microsoft.Extensions.Logging;
 using QuizGame.Helpers;
-using QuizGame.Views;
+using QuizGame.Models;
+using QuizGame.Services.Implementations;
+using QuizGame.Services.Interfaces;
+using QuizGame.ViewModels;
 
 namespace QuizGame
 {
@@ -65,8 +64,12 @@ namespace QuizGame
 
         static IServiceCollection AddViewModels(this IServiceCollection services)
         {
-            services.AddSingleton<TopicsViewModel>();
             services.AddSingleton<HeaderViewModel>();
+
+            services.AddSingleton<MainPageViewModel>();
+            services.AddSingleton<TopicsViewModel>();
+
+            services.AddTransient<QuizPageViewModel>();
             services.AddTransient<QuestionViewModel>();
 
             return services;

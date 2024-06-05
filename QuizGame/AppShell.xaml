@@ -8,11 +8,6 @@
     Shell.FlyoutBehavior="Disabled"
     Shell.BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Black}}">
 
-    <Shell.TitleView>
-        <ContentView>
-            <views:HeaderView x:Name="headerView"/>
-        </ContentView>
-    </Shell.TitleView>
     
     <ShellContent
         ContentTemplate="{DataTemplate local:MainPage}"

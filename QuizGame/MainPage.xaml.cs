@@ -5,12 +5,14 @@ namespace QuizGame
     public partial class MainPage : ContentPage
     {
         // Constructor
-        public MainPage(TopicsViewModel topicsViewModel)
+        public MainPage(MainPageViewModel mainPageViewModel)
         {
             InitializeComponent();
 
             // Set binding contexts
-            topicsView.BindingContext = topicsViewModel;
+            BindingContext = mainPageViewModel;
+            topicsView.BindingContext = mainPageViewModel.TopicsViewModel;
+            headerView.BindingContext = mainPageViewModel.HeaderViewModel;
         }
     }
 }

@@ -2,7 +2,7 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="QuizGame.Views.QuestionView"
-             xmlns:local="clr-namespace:QuizGame.Views"
+             xmlns:views="clr-namespace:QuizGame.Views"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:viewmodel="clr-namespace:QuizGame.ViewModels">
 
@@ -12,12 +12,10 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
-            
             <Frame 
                 Grid.Row="0"
                 BackgroundColor="{AppThemeBinding Dark={StaticResource Black}, Light={StaticResource Primary}}"
@@ -35,11 +33,9 @@
                 Source="{Binding DisplayedQuestion.ImagePath}" 
                 Aspect="AspectFit"/>
 
-            <ContentView 
-                Grid.Row="2"
-                HorizontalOptions="Center">
-                <local:CodeSnippetView BindingContext="{Binding CodeViewModel}"/>
-            </ContentView>
+            <views:CodeSnippetView 
+                    Grid.Row="2"
+                    BindingContext="{Binding CodeSnippetViewModel}"/>
 
             <CollectionView
                 Grid.Row="3"
@@ -47,9 +43,7 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
 
-                        <ContentView>
-                            <local:AnswerView BindingContext="{Binding .}"/>
-                        </ContentView>
+                        <views:AnswerView BindingContext="{Binding .}"/>
 
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
@@ -58,8 +52,10 @@
             <Button 
                 Grid.Row="4"
                 Text="Check Answer"
+                Style="{StaticResource Headline}"
                 Command="{Binding NextCommand}"
                 CommandParameter="{Binding ., Source={RelativeSource Self}}"
+                Margin="0,20,20,20"
                 HorizontalOptions="End"/>
         </Grid>
     </ScrollView>

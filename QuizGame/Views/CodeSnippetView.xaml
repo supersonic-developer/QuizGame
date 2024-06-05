@@ -5,9 +5,7 @@
 
     <WebView 
         BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}"
-        IsVisible="{Binding IsVisible}" 
-        WidthRequest="{Binding Width}" 
-        HeightRequest="{Binding Height}">
+        IsVisible="{Binding IsVisible}">
         
         <WebView.Source>
             <HtmlWebViewSource Html="{Binding Html2Display}"/>

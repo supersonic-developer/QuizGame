@@ -2,30 +2,40 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="QuizGame.Views.AnswerView"
-             xmlns:local="clr-namespace:QuizGame.Views"
-             xmlns:converts="clr-namespace:QuizGame.Converters">
+             xmlns:views="clr-namespace:QuizGame.Views"
+             xmlns:converts="clr-namespace:QuizGame.Converters"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
    
     <Grid
-        Grid.Row="3"
         HorizontalOptions="Fill">
         
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Frame
             Grid.Row="0"
             CornerRadius="25"
-            BackgroundColor="{Binding IsDisplayed, Converter={converts:IsAnswerDisplay}}"
+            BackgroundColor="{Binding AnswerState, Converter={converts:IsAnswerDisplay}}"
             Margin="5,10,5,10">
+            
             <RadioButton
+                x:Name="radioButton"
                 Content="{Binding Answer.Text}"
                 TextColor="{StaticResource White}"
                 GroupName="Answers"
-                HorizontalOptions="Fill"/>
+                HorizontalOptions="Fill">
+                
+                <RadioButton.Behaviors>
+                    <toolkit:EventToCommandBehavior
+                        EventName="CheckedChanged"
+                        Command="{Binding CheckedChangedCommand}"
+                        CommandParameter="{Binding IsChecked, Source={x:Reference radioButton}}"/>
+                </RadioButton.Behaviors>
+            </RadioButton>
         </Frame>
 
 
@@ -34,10 +44,9 @@
             Source="{Binding Answer.ImagePath}"
             Aspect="AspectFit"/>
 
-        <ContentView
-            Grid.Row="2">
-            <local:CodeSnippetView BindingContext="{Binding CodeSnippetViewModel}"/>
-        </ContentView>
+        <views:CodeSnippetView
+            BindingContext="{Binding CodeSnippetViewModel}"
+            Grid.Row="2"/>
 
     </Grid>    
 </ContentView>

@@ -5,11 +5,46 @@
              xmlns:views="clr-namespace:QuizGame.Views"
              x:Class="QuizGame.MainPage">
 
+    <!-- The TitleView property is used to set the header of the page. -->
+    <Shell.TitleView>
+        <views:HeaderView x:Name="headerView"/>
+    </Shell.TitleView>
+
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            EventName="Disappearing"
+            Command="{Binding DisappearingCommand}"
+            CommandParameter="{Binding ., Source={x:Reference searchBar}}"/>
+    </ContentPage.Behaviors>
+
+
     <Grid BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
 
-        <ContentView>
-            <views:TopicsView x:Name="topicsView"/>
-        </ContentView>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" />
 
+        <SearchBar 
+            Grid.Row="0"
+            x:Name="searchBar" 
+            Placeholder="Search topic..."  
+            Margin="10, 10, 10, 10" 
+            WidthRequest="300">
+            <SearchBar.Behaviors>
+                <toolkit:EventToCommandBehavior
+                    EventName="TextChanged"
+                    Command="{Binding PerformSearchCommand}"
+                    CommandParameter="{Binding Text, Source={x:Reference searchBar}}"/>
+            </SearchBar.Behaviors>
+        </SearchBar>
+        
+        <views:TopicsView 
+            Grid.Row="1"
+            x:Name="topicsView"/>
+        
     </Grid>
 </ContentPage>

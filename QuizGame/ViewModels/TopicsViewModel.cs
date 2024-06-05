@@ -1,7 +1,9 @@
-﻿using QuizGame.Services.Interfaces;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using QuizGame.Helpers;
 using QuizGame.Models;
+using QuizGame.Services.Interfaces;
 
 namespace QuizGame.ViewModels
 {
@@ -9,88 +11,81 @@ namespace QuizGame.ViewModels
     {
         // Models and services
         readonly Topics topics;
-        readonly IAsyncInitializeService<List<Question>> questionsService;
         readonly List<Question> questions;
+        readonly IAsyncInitializeService<List<Question>> questionsService;
 
-        // Bindable properties
+        // Binded properties
         [ObservableProperty]
         List<string> selectedTopicNames;
-
-        [ObservableProperty]
-        bool isLoading = false;
 
         // Cancellation token source for asynchronous search
         CancellationTokenSource cts = new();
 
-        void SetHeader(HeaderViewModel headerViewModel)
-        {
-            headerViewModel.Title = "Linked";
-            headerViewModel.Subtitle = " Quizzes";
-            headerViewModel.ImagePath = "linkedin_logo.png";
-            headerViewModel.HomeImagePath = "";
-        }
-
 
         // Constructor
-        public TopicsViewModel(Topics topics, IAsyncInitializeService<List<Question>> questionsService, List<Question> questions, HeaderViewModel headerViewModel)
+        public TopicsViewModel(Topics topics, IAsyncInitializeService<List<Question>> questionsService, List<Question> questions)
         {
-            SetHeader(headerViewModel);
-            // Set topics data
-            this.topics = topics;
-            SelectedTopicNames = GetNames();
-            topics.PropertyChanged += (s, e) => { SelectedTopicNames = GetNames(); };
-
             this.questionsService = questionsService;
             this.questions = questions;
+            this.topics = topics;
+
+            // Add all name to the list (adding buttons on UI)
+            SelectedTopicNames = GetNames();
+            topics.PropertyChanged += (s, e) => SetNames();
         }
 
-        // Method to query all topic names
+
+        // Methods
         List<string> GetNames() => topics.TopicsData.Select(element => element.Name).ToList();
 
-        
-        // Commands
-        [RelayCommand]
-        static void Disappearing(SearchBar searchBar) => searchBar.Text = string.Empty;
+        void SetNames() => SelectedTopicNames = topics.TopicsData.Select(element => element.Name).ToList();
 
-        [RelayCommand]
-        async Task PerformSearchAsync(string keyWord)
+        public async Task SearchAndSetElementsAsync(string keyWord)
         {
             await cts.CancelAsync();
             cts = new();
-            // Fire and forget a task to search for the keyword
-            _ = Task.Run(() => 
+            var token = cts.Token;
+            try
             {
-                try 
+                var selectedTopicNames = await Task.Run(() =>
                 {
                     // Get all names
                     List<string> names = GetNames();
 
-                    // Perform case-insensitive search and add matching names to SelectedNames
-                    List<string> result = names.Where(name => 
-                    {
-                        cts.Token.ThrowIfCancellationRequested();
-                        return name.StartsWith(keyWord, StringComparison.OrdinalIgnoreCase);
-                    }).ToList();
+                    // Perform case-insensitive search
+                    List<string> result = names.Where(name => name.StartsWith(keyWord, StringComparison.OrdinalIgnoreCase)).ToList();
 
                     if (!result.SequenceEqual(SelectedTopicNames))
                     {
-                        SelectedTopicNames = result;
+                        return result;
                     }
+                    return null;
+                });
+                token.ThrowIfCancellationRequested();
+                if (selectedTopicNames != null)
+                {
+                    SelectedTopicNames = selectedTopicNames;
                 }
-                catch(OperationCanceledException) { }
-            });
+            }
+            catch (OperationCanceledException) { }
         }
 
+
+        // Commands      
         [RelayCommand]
         async Task NavigateAsync(string butText)
         {
-            IsLoading = true;
+            // Signal navigation start (turn on activity bar on UI)
+            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage());
+
+            // Select the topic and load data from file
             topics.SelectedTopicIdx = topics.TopicsData.FindIndex(element => element.Name == butText);
-            List<Question> readQuestions = await questionsService.InitializeAsync();
             questions.Clear();
-            questions.AddRange(readQuestions);
+            questions.AddRange(await questionsService.InitializeAsync());
             await Shell.Current.GoToAsync($"{nameof(QuizPage)}");
-            IsLoading = false;
-        }     
+
+            // Signal navigation end (turn off activity bar on UI)
+            WeakReferenceMessenger.Default.Send(new NavigationCompletedMessage());
+        }
     }
 }

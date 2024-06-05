@@ -1,6 +1,6 @@
-﻿using QuizGame.Models;
+﻿using QuizGame.Helpers;
+using QuizGame.Models;
 using QuizGame.Services.Interfaces;
-using QuizGame.Helpers;
 
 namespace QuizGame.Services.Implementations
 {
@@ -20,7 +20,7 @@ namespace QuizGame.Services.Implementations
             // Read file content asynchronously
             string content = await fileReaderService.ReadFileAsync(path);
             // Parse the content
-            result = QuestionsInitializer.ParseQuestions(content,  Path.GetDirectoryName(path)?.Replace(@"\", "/") ?? throw new Exception($"No directory was found for image at path:{path}"));
+            result = MarkdowParser.ParseQuestions(content, Path.GetDirectoryName(path)?.Replace(@"\", "/") ?? throw new Exception($"No directory was found for image at path:{path}"));
 
             return result;
         }

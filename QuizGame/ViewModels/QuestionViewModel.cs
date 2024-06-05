@@ -1,47 +1,33 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using QuizGame.Helpers;
 using QuizGame.Models;
-using System.Collections.ObjectModel;
 
 namespace QuizGame.ViewModels
 {
     public partial class QuestionViewModel : ObservableObject
     {
         // Bindable properties
-        [ObservableProperty]
-        Question displayedQuestion;
+        public Question DisplayedQuestion { get; }
 
-        [ObservableProperty]
-        CodeSnippetViewModel codeViewModel;
+        public CodeSnippetViewModel CodeSnippetViewModel { get; }
 
-        [ObservableProperty]
-        bool isLoading = false;
+        public List<AnswerViewModel> AnswerViewModels { get; }
 
-        public ObservableCollection<AnswerViewModel> AnswerViewModels { get; }
-
-        bool isAnswerShown;
-
-        void SetHeader(HeaderViewModel headerViewModel, Topics topics)
-        {
-            headerViewModel.Title = topics.TopicsData[(int)topics.SelectedTopicIdx!].Name;
-            headerViewModel.Subtitle = "";
-            headerViewModel.ImagePath = "";
-            headerViewModel.HomeImagePath = "home_icon.png";
-        }
+        bool isDisplayed = false;
 
 
         // Constructor
-        public QuestionViewModel(Topics topics, List<Question> questions, HighlightJs highlightJs, HeaderViewModel headerViewModel)
+        public QuestionViewModel(List<Question> questions, HighlightJs highlightJs)
         {
-            // Set header view model
-            SetHeader(headerViewModel, topics);
-
-            // Set view model properties
+            // Select question randomly
             DisplayedQuestion = RandomElementAndRemove(questions);
-            CodeViewModel = new CodeSnippetViewModel(displayedQuestion.CodeBlock, highlightJs);
+
+            // Create view models
+            CodeSnippetViewModel = new CodeSnippetViewModel(DisplayedQuestion.CodeBlock, highlightJs);
             AnswerViewModels = [];
-            foreach (Answer answer in displayedQuestion.Answers)
+            foreach (Answer answer in DisplayedQuestion.Answers)
             {
                 AnswerViewModels.Add(new AnswerViewModel(answer, new CodeSnippetViewModel(answer.CodeBlock, highlightJs)));
             }
@@ -62,23 +48,23 @@ namespace QuizGame.ViewModels
         [RelayCommand]
         async Task NextAsync(Button button)
         {
-            IsLoading = true;
-            if (isAnswerShown)
-            {            
+            if (isDisplayed)
+            {
+                WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage());
                 await Shell.Current.GoToAsync($"{nameof(QuizPage)}");
+                WeakReferenceMessenger.Default.Send(new NavigationCompletedMessage());
             }
             else
             {
-                isAnswerShown = true;
+                isDisplayed = true;
                 // Change the text of button
                 button.Text = "Next";
                 // Copy correctness into binded property
                 foreach (AnswerViewModel answerViewModel in AnswerViewModels)
                 {
-                    answerViewModel.IsDisplayed = answerViewModel.Answer.IsCorrect;
+                    answerViewModel.AnswerState = answerViewModel.Answer.IsCorrect ? AnswerViewModel.State.CorrectDisplayed : AnswerViewModel.State.InCorrectDisplayed;
                 }
             }
-            IsLoading = false;
         }
     }
 }

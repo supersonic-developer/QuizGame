@@ -5,7 +5,7 @@ using QuizGame.Models;
 
 namespace QuizGame.Helpers
 {
-    public class QuestionsInitializer
+    public static class MarkdowParser
     {
         // Parser functions
         public static List<Question> ParseQuestions(string mdText, string directory)

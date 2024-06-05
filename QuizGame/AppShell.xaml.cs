@@ -1,15 +1,12 @@
-﻿using QuizGame.ViewModels;
-
-namespace QuizGame
+﻿namespace QuizGame
 {
     public partial class AppShell : Shell
     {
-        public AppShell(HeaderViewModel headerViewModel)
+        public AppShell()
         {
             InitializeComponent();
 
             Routing.RegisterRoute(nameof(QuizPage), typeof(QuizPage));
-            headerView.BindingContext = headerViewModel;
         }
     }
 }

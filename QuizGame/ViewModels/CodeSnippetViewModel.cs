@@ -9,9 +9,6 @@ namespace QuizGame.ViewModels
     {
         // Member variables
         readonly CodeSnippet? codeSnippet;
-
-        static readonly string[] separator = ["\r\n", "\r", "\n"];
-
         readonly HighlightJs? libraries;
 
         // Properties
@@ -21,28 +18,18 @@ namespace QuizGame.ViewModels
         [ObservableProperty]
         bool isVisible;
 
-        [ObservableProperty]
-        int width;
-
-        [ObservableProperty]
-        int height;
-
-
         // Constructor
         public CodeSnippetViewModel(CodeSnippet? codeSnippet, HighlightJs libraries)
         {
             if (codeSnippet == null)
             {
                 IsVisible = false;
-                Width = 0;
-                Height = 0;
             }
             else
             {
                 this.codeSnippet = codeSnippet;
                 this.libraries = libraries;
                 IsVisible = true;
-                CalculateSize();
                 _ = Task.Run(async () => Html2Display = await InitializeAsync());
                 Application.Current!.RequestedThemeChanged += (s, e) => _ = Task.Run(async () => Html2Display = await InitializeAsync());
             }
@@ -62,23 +49,6 @@ namespace QuizGame.ViewModels
             string codeString = $"<pre><code class=\"language-" + codeSnippet!.Language + "\">" + codeSnippet!.Content + "</code></pre>";
 
             return styleString + scriptString + codeString + commandString;
-        } 
-
-        void CalculateSize()
-        {
-            string[] lines = codeSnippet?.Content.Split(separator, StringSplitOptions.None) ?? throw new Exception("No code snippet was provided");
-
-            int maxCharacters = 0;
-            foreach (string line in lines)
-            {
-                if (line.Length > maxCharacters)
-                {
-                    maxCharacters = line.Length;
-                }
-            }
-
-            Width = (10*maxCharacters + 15 > 390) ? 390 : 10 * maxCharacters + 15;
-            Height = 15*lines.Length + 50;
         }
     }
 }
