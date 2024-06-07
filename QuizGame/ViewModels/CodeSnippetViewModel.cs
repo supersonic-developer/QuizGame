@@ -5,11 +5,11 @@ using QuizGame.Services.Interfaces;
 
 namespace QuizGame.ViewModels
 {
-    public partial class CodeSnippetViewModel : ObservableObject, IAsyncInitializeService<string>
+    public partial class CodeSnippetViewModel : ObservableObject
     {
         // Member variables
         readonly CodeSnippet? codeSnippet;
-        readonly HighlightJs? libraries;
+        readonly HighlightJs? highlightJs;
 
         // Properties
         [ObservableProperty]
@@ -19,7 +19,7 @@ namespace QuizGame.ViewModels
         bool isVisible;
 
         // Constructor
-        public CodeSnippetViewModel(CodeSnippet? codeSnippet, HighlightJs libraries)
+        public CodeSnippetViewModel(CodeSnippet? codeSnippet, HighlightJs highlightJs)
         {
             if (codeSnippet == null)
             {
@@ -28,27 +28,27 @@ namespace QuizGame.ViewModels
             else
             {
                 this.codeSnippet = codeSnippet;
-                this.libraries = libraries;
+                this.highlightJs = highlightJs;
                 IsVisible = true;
-                _ = Task.Run(async () => Html2Display = await InitializeAsync());
-                Application.Current!.RequestedThemeChanged += (s, e) => _ = Task.Run(async () => Html2Display = await InitializeAsync());
+                BuildHtmlString();
+                Application.Current!.RequestedThemeChanged += (_, _) => BuildHtmlString();
             }
         }
 
 
         // Methods
-        public async Task<string> InitializeAsync()
+        public void BuildHtmlString()
         {
-            // await libraries
-            (string highlightJs, string lightStyleCss, string darkStyleCss) = await libraries!.Libraries;
+            if (IsVisible)
+            {
+                // Construct the HTML string
+                string styleString = Application.Current?.RequestedTheme == AppTheme.Light ? "<style>" + highlightJs!.Libraries!.Value.LightStyleCss + "</style>" : "<style>" + highlightJs!.Libraries!.Value.DarkStyleCss + "</style>";
+                string scriptString = "<script>" + highlightJs!.Libraries!.Value.HighlightJs + "</script>";
+                string commandString = "<script>hljs.highlightAll();</script>";
+                string codeString = $"<pre><code class=\"language-" + codeSnippet!.Language + "\">" + codeSnippet!.Content + "</code></pre>";
 
-            // Construct the HTML string
-            string styleString = Application.Current?.RequestedTheme == AppTheme.Light ? "<style>" + lightStyleCss + "</style>" : "<style>" + darkStyleCss + "</style>";
-            string scriptString = "<script>" + highlightJs + "</script>";
-            string commandString = "<script>hljs.highlightAll();</script>";
-            string codeString = $"<pre><code class=\"language-" + codeSnippet!.Language + "\">" + codeSnippet!.Content + "</code></pre>";
-
-            return styleString + scriptString + codeString + commandString;
+                Html2Display = styleString + scriptString + commandString + codeString;
+            }
         }
     }
 }

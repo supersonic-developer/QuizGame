@@ -4,14 +4,25 @@ using QuizGame.Models;
 
 namespace QuizGame.ViewModels
 {
-    public partial class AnswerViewModel(Answer answer, CodeSnippetViewModel codeSnippetViewModel) : ObservableObject
+    public partial class AnswerViewModel : ObservableObject
     {
-        public Answer Answer { get; } = answer;
+        public Answer Answer { get; }
 
-        public CodeSnippetViewModel CodeSnippetViewModel { get; } = codeSnippetViewModel;
+        public CodeSnippetViewModel CodeSnippetViewModel { get; }
 
         [ObservableProperty]
         State answerState = Application.Current?.RequestedTheme == AppTheme.Light ? State.LightTheme : State.DarkTheme;
+
+        public AnswerViewModel(Answer answer, CodeSnippetViewModel codeSnippetViewModel)
+        {
+            Answer = answer;
+            CodeSnippetViewModel = codeSnippetViewModel;
+            Application.Current!.RequestedThemeChanged += (_, _) => 
+            {
+                if (AnswerState == State.LightTheme || AnswerState == State.DarkTheme)
+                    AnswerState = Application.Current?.RequestedTheme == AppTheme.Light ? State.LightTheme : State.DarkTheme;
+            };
+        }
 
         public enum State
         {

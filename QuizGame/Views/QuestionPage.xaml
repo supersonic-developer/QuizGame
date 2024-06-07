@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="QuizGame.Views.QuestionView"
-             xmlns:views="clr-namespace:QuizGame.Views"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:viewmodel="clr-namespace:QuizGame.ViewModels">
+             xmlns:views="clr-namespace:QuizGame.Views"
+             xmlns:viewModels="clr-namespace:QuizGame.ViewModels"
+             x:Class="QuizGame.Views.QuestionPage">
 
     <ScrollView>
-        <Grid>
+        <Grid
+            BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -16,26 +17,24 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Frame 
+
+            <Label
                 Grid.Row="0"
-                BackgroundColor="{AppThemeBinding Dark={StaticResource Black}, Light={StaticResource Primary}}"
-                CornerRadius="30"
-                Margin="10,10,10,10">
-                <Label
-                    Text="{Binding DisplayedQuestion.Text}"
-                    Style="{StaticResource SubHeadline}"
-                    VerticalOptions="Center" 
-                    HorizontalOptions="Center" />
-            </Frame>
+                Text="{Binding DisplayedQuestion.Text}"
+                Style="{StaticResource SubHeadline}"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center" 
+                Margin="5,20,5,20"/>
 
             <Image 
                 Grid.Row="1"
                 Source="{Binding DisplayedQuestion.ImagePath}" 
                 Aspect="AspectFit"/>
 
-            <views:CodeSnippetView 
-                    Grid.Row="2"
-                    BindingContext="{Binding CodeSnippetViewModel}"/>
+            <views:CodeSnippetView
+                Grid.Row="2"
+                HorizontalOptions="FillAndExpand"
+                BindingContext="{Binding CodeSnippetViewModel}"/>
 
             <CollectionView
                 Grid.Row="3"
@@ -49,14 +48,16 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <Button 
+            <Button
                 Grid.Row="4"
                 Text="Check Answer"
-                Style="{StaticResource Headline}"
+                FontSize="20"
                 Command="{Binding NextCommand}"
                 CommandParameter="{Binding ., Source={RelativeSource Self}}"
                 Margin="0,20,20,20"
                 HorizontalOptions="End"/>
+
         </Grid>
     </ScrollView>
-</ContentView>
+
+</ContentPage>

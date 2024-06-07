@@ -40,7 +40,7 @@ namespace QuizGame.Helpers
                         break;
                     case ParagraphBlock:
                         // Pictures that is required to use
-                        ParseImages((ParagraphBlock)block, quiz[^1], directory);
+                        ParseImages((ParagraphBlock)block, quiz[^1], directory, isReadingQuestion);
                         // Links for answers, currently I wont use
                         break;
                     case LinkReferenceDefinitionGroup:
@@ -53,7 +53,7 @@ namespace QuizGame.Helpers
             return quiz;
         }
 
-        static void ParseImages(ParagraphBlock paragraphBlock, Question currentQuestion, string rootDir)
+        static void ParseImages(ParagraphBlock paragraphBlock, Question currentQuestion, string rootDir, bool isReadingQuestion)
         {
             if (paragraphBlock.Inline == null)
                 return;
@@ -64,6 +64,17 @@ namespace QuizGame.Helpers
                     if (linkInline.IsImage)
                     {
                         currentQuestion.ImagePath = rootDir + @"/" + linkInline.Url?.Replace(@"\?raw=[^\.]*\.", ".");
+                    }
+                }
+                else if (descendant is CodeInline descendantCode)
+                {
+                    if (isReadingQuestion)
+                    {
+                        currentQuestion.CodeBlock ??= new CodeSnippet("", descendantCode.Content.ToString());
+                    }
+                    else 
+                    {
+                        currentQuestion.Answers[^1].CodeBlock ??= new CodeSnippet("", descendantCode.Content.ToString());
                     }
                 }
             }

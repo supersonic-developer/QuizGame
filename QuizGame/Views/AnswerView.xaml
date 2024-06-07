@@ -16,28 +16,25 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Frame
-            Grid.Row="0"
-            CornerRadius="25"
-            BackgroundColor="{Binding AnswerState, Converter={converts:IsAnswerDisplay}}"
-            Margin="5,10,5,10">
-            
-            <RadioButton
-                x:Name="radioButton"
-                Content="{Binding Answer.Text}"
-                TextColor="{StaticResource White}"
-                GroupName="Answers"
-                HorizontalOptions="Fill">
-                
-                <RadioButton.Behaviors>
-                    <toolkit:EventToCommandBehavior
-                        EventName="CheckedChanged"
-                        Command="{Binding CheckedChangedCommand}"
-                        CommandParameter="{Binding IsChecked, Source={x:Reference radioButton}}"/>
-                </RadioButton.Behaviors>
-            </RadioButton>
-        </Frame>
 
+        <RadioButton
+            Grid.Row="0"
+            x:Name="radioButton"
+            Content="{Binding Answer.Text}"
+            TextColor="{StaticResource White}"
+            Background="{Binding AnswerState, Converter={converts:IsAnswerDisplay}}"
+            CornerRadius="25"
+            Margin="10,0,10,0"
+            GroupName="Answers"
+            HorizontalOptions="Fill">
+
+            <RadioButton.Behaviors>
+                <toolkit:EventToCommandBehavior
+                    EventName="CheckedChanged"
+                    Command="{Binding CheckedChangedCommand}"
+                    CommandParameter="{Binding IsChecked, Source={x:Reference radioButton}}"/>
+            </RadioButton.Behaviors>
+        </RadioButton>
 
         <Image
             Grid.Row="1"
@@ -45,8 +42,9 @@
             Aspect="AspectFit"/>
 
         <views:CodeSnippetView
-            BindingContext="{Binding CodeSnippetViewModel}"
-            Grid.Row="2"/>
+            Grid.Row="2"
+            HorizontalOptions="Fill"
+            BindingContext="{Binding CodeSnippetViewModel}" />
 
     </Grid>    
 </ContentView>

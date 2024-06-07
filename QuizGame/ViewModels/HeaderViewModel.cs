@@ -2,10 +2,12 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using QuizGame.Helpers;
+using QuizGame.Views;
+using QuizGame.Models;
 
 namespace QuizGame.ViewModels
 {
-    public partial class HeaderViewModel : ObservableObject
+    public partial class HeaderViewModel(Quiz quiz) : ObservableObject
     {
         [ObservableProperty]
         string title = "";
@@ -19,13 +21,14 @@ namespace QuizGame.ViewModels
         [ObservableProperty]
         string homeImagePath = "";
 
+        readonly Quiz quiz = quiz;
+
         [RelayCommand]
         async Task ButtonClickedAsync()
         {
-            WeakReferenceMessenger.Default.Send(new NavigationRequestedMessage());
-            WeakReferenceMessenger.Default.Send(new UpdateHeaderMessage());
+            WeakReferenceMessenger.Default.Send(new OnNavigationMessage());
+            quiz.Questions = null;
             await Shell.Current.GoToAsync($"//{nameof(MainPage)}");
-            WeakReferenceMessenger.Default.Send(new NavigationCompletedMessage());
         }
     }
 }

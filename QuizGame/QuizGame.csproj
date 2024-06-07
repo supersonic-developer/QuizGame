@@ -83,9 +83,6 @@
 	  <Compile Update="Views\HeaderView.xaml.cs">
 	    <DependentUpon>HeaderView.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\QuestionView.xaml.cs">
-	    <DependentUpon>QuestionView.xaml</DependentUpon>
-	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -98,10 +95,7 @@
 	  <MauiXaml Update="Views\HeaderView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\QuestionView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\TopicsView.xaml">
+	  <MauiXaml Update="Views\QuestionPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

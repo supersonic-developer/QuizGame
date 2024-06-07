@@ -1,6 +1,6 @@
 ﻿using QuizGame.ViewModels;
 
-namespace QuizGame
+namespace QuizGame.Views
 {
     public partial class MainPage : ContentPage
     {
@@ -11,8 +11,6 @@ namespace QuizGame
 
             // Set binding contexts
             BindingContext = mainPageViewModel;
-            topicsView.BindingContext = mainPageViewModel.TopicsViewModel;
-            headerView.BindingContext = mainPageViewModel.HeaderViewModel;
         }
     }
 }

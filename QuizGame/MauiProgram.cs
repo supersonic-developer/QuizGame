@@ -5,6 +5,8 @@ using QuizGame.Models;
 using QuizGame.Services.Implementations;
 using QuizGame.Services.Interfaces;
 using QuizGame.ViewModels;
+using QuizGame.Views;
+using System.Collections.ObjectModel;
 
 namespace QuizGame
 {
@@ -57,7 +59,7 @@ namespace QuizGame
 
             // Questions service
             services.AddSingleton<IAsyncInitializeService<List<Question>>, AsyncInitializeQuestionsService>();
-            services.AddSingleton<List<Question>>();
+            services.AddSingleton<Quiz>();
 
             return services;
         }
@@ -65,12 +67,8 @@ namespace QuizGame
         static IServiceCollection AddViewModels(this IServiceCollection services)
         {
             services.AddSingleton<HeaderViewModel>();
-
             services.AddSingleton<MainPageViewModel>();
-            services.AddSingleton<TopicsViewModel>();
-
-            services.AddTransient<QuizPageViewModel>();
-            services.AddTransient<QuestionViewModel>();
+            services.AddTransient<QuestionPageViewModel>();
 
             return services;
         }
@@ -80,7 +78,7 @@ namespace QuizGame
             // Main page
             services.AddSingleton<MainPage>();
             // Question page
-            services.AddTransient<QuizPage>();
+            services.AddTransient<QuestionPage>();
 
             return services;
         }

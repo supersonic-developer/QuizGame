@@ -6,11 +6,21 @@
     xmlns:local="clr-namespace:QuizGame"
     xmlns:views="clr-namespace:QuizGame.Views"
     Shell.FlyoutBehavior="Disabled"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     Shell.BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Black}}">
 
+    <!-- The TitleView property is used to set the header of the page. -->
+    <Shell.TitleView>
+        <views:HeaderView x:Name="headerView"/>
+    </Shell.TitleView>
+    
     
     <ShellContent
-        ContentTemplate="{DataTemplate local:MainPage}"
+        ContentTemplate="{DataTemplate views:MainPage}"
         Route="MainPage"/>
+
+    <ShellContent
+        ContentTemplate="{DataTemplate views:QuestionPage}"
+        Route="QuestionPage"/>
 
 </Shell>

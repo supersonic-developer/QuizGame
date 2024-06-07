@@ -3,15 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:views="clr-namespace:QuizGame.Views"
-             x:Class="QuizGame.MainPage">
-
-    <!-- The TitleView property is used to set the header of the page. -->
-    <Shell.TitleView>
-        <views:HeaderView x:Name="headerView"/>
-    </Shell.TitleView>
-
+             xmlns:viewmodels="clr-namespace:QuizGame.ViewModels"
+             x:Class="QuizGame.Views.MainPage">
 
     <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding AppearingCommand}" />
         <toolkit:EventToCommandBehavior
             EventName="Disappearing"
             Command="{Binding DisappearingCommand}"
@@ -41,10 +39,25 @@
                     CommandParameter="{Binding Text, Source={x:Reference searchBar}}"/>
             </SearchBar.Behaviors>
         </SearchBar>
-        
-        <views:TopicsView 
+
+        <CollectionView 
             Grid.Row="1"
-            x:Name="topicsView"/>
-        
+            ItemsSource="{Binding SelectedTopicNames}"
+            WidthRequest="230"
+            Margin="0, 5, 0, 5"
+            EmptyView="No result was found">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Button
+                    Text="{Binding .}"
+                    Command="{Binding NavigateCommand, Source={RelativeSource AncestorType={x:Type viewmodels:MainPageViewModel}}}"
+                    CommandParameter="{Binding Text, Source={RelativeSource Self}}"
+                    Margin="0,5,0,5"/>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
     </Grid>
 </ContentPage>
