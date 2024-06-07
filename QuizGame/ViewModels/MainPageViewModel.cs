@@ -8,7 +8,7 @@ using QuizGame.Views;
 
 namespace QuizGame.ViewModels
 {
-    public partial class MainPageViewModel : ObservableObject
+    public partial class MainPageViewModel(Topics topics, HeaderViewModel headerViewModel, HighlightJs highlightJs, Quiz quiz) : ObservableObject
     {
         // Binded properties
         [ObservableProperty]
@@ -18,43 +18,27 @@ namespace QuizGame.ViewModels
         List<string> selectedTopicNames = [];
 
         // Models and services
-        readonly Topics topics;
+        readonly Topics topics = topics;
+        readonly HighlightJs highlightJs = highlightJs;
+        readonly Quiz quiz = quiz;
         // View models
-        public HeaderViewModel HeaderViewModel { get; }
-        readonly HighlightJs highlightJs;
-        readonly Quiz quiz;
+        readonly HeaderViewModel headerViewModel = headerViewModel;
 
         // Cancellation token source for asynchronous search
         CancellationTokenSource cts = new();
 
-
-        // Constructor
-        public MainPageViewModel(Topics topics, HeaderViewModel headerViewModel, HighlightJs highlightJs, Quiz quiz)
-        {
-            HeaderViewModel = headerViewModel;
-            SetHeader();
-
-            this.topics = topics;
-            this.highlightJs = highlightJs;
-            this.quiz = quiz;
-
-            // Register messages
-            WeakReferenceMessenger.Default.Register<OnNavigationMessage>(this, (_, _) => SetHeader());
-        }
-
-
         // Methods
         void SetHeader()
         {
-            HeaderViewModel.Title = "Linked";
-            HeaderViewModel.Subtitle = " Quizzes";
-            HeaderViewModel.ImagePath = "linkedin_logo.png";
-            HeaderViewModel.HomeImagePath = "";
+            headerViewModel.Title = "Linked";
+            headerViewModel.Subtitle = " Quizzes";
+            headerViewModel.ImagePath = "linkedin_logo.png";
+            headerViewModel.HomeImagePath = "";
         }
 
-        List<string> GetNames() => topics.TopicsData.Select(element => element.Name).ToList();
+        List<string> GetNames() => topics.TopicsData!.Select(element => element.Name).ToList();
 
-        void SetNames() => SelectedTopicNames = topics.TopicsData.Select(element => element.Name).ToList();
+        void SetNames() => SelectedTopicNames = topics.TopicsData!.Select(element => element.Name).ToList();
 
 
         // Commands
@@ -62,6 +46,7 @@ namespace QuizGame.ViewModels
         async Task AppearingAsync()
         { 
             IsLoading = true;
+            SetHeader();
             await topics.InitAsync();
             SetNames();
             IsLoading = false;
@@ -108,7 +93,7 @@ namespace QuizGame.ViewModels
         {
             IsLoading = true;
             // Select the topic and load data from file
-            topics.SelectedTopicIdx = topics.TopicsData.FindIndex(element => element.Name == butText);
+            topics.SelectedTopicIdx = topics.TopicsData!.FindIndex(element => element.Name == butText);
             await highlightJs.InitAsync();
             await quiz.InitAsync();
             await Shell.Current.GoToAsync($"{nameof(QuestionPage)}");

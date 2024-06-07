@@ -9,43 +9,36 @@ using System.Collections.ObjectModel;
 
 namespace QuizGame.ViewModels
 {
-    public partial class QuestionPageViewModel : ObservableObject
+    public partial class QuestionPageViewModel(Quiz quiz, Topics topics, HighlightJs highlightJs, HeaderViewModel headerViewModel) : ObservableObject
     {
         // Bindable properties
         [ObservableProperty]
-        Question displayedQuestion;
+        Question? displayedQuestion;
 
-        public CodeSnippetViewModel CodeSnippetViewModel { get; }
+        // Models and services
+        readonly HighlightJs highlightJs = highlightJs;
+        readonly Quiz quiz = quiz;
+        readonly Topics topics = topics;
+        readonly HeaderViewModel headerViewModel = headerViewModel;
 
+        // View models
+        [ObservableProperty]
+        CodeSnippetViewModel? codeSnippetViewModel;
         public List<AnswerViewModel> AnswerViewModels { get; } = [];
 
+        // State variable, becomes true if the right answer was displayed
         bool isDisplayed = false;
-        readonly HighlightJs highlightJs;
-        readonly Quiz quiz;
-
-        // Constructor
-        public QuestionPageViewModel(Quiz quiz, Topics topics, HighlightJs highlightJs, HeaderViewModel headerVm)
-        {
-            // Set data
-            this.quiz = quiz;
-            this.highlightJs = highlightJs;
-            SetHeader(headerVm, topics);
-            DisplayedQuestion = RandomElementAndRemove();
-            CodeSnippetViewModel = new(DisplayedQuestion.CodeBlock, highlightJs);
-            foreach (Answer answer in DisplayedQuestion.Answers)
-            {
-                AnswerViewModels.Add(new AnswerViewModel(answer, new CodeSnippetViewModel(answer.CodeBlock, highlightJs)));
-            }
-        }
-
 
         // Methods
-        static void SetHeader(HeaderViewModel headerViewModel, Topics topics)
+        void SetHeader()
         {
-            headerViewModel.Title = topics.TopicsData[(int)topics.SelectedTopicIdx!].Name;
-            headerViewModel.Subtitle = "";
-            headerViewModel.ImagePath = "";
-            headerViewModel.HomeImagePath = "home_icon.png";
+            if (!(headerViewModel.Title == topics.TopicsData![(int)topics.SelectedTopicIdx!].Name))
+            {
+                headerViewModel.Title = topics.TopicsData![(int)topics.SelectedTopicIdx!].Name;
+                headerViewModel.Subtitle = "";
+                headerViewModel.ImagePath = "";
+                headerViewModel.HomeImagePath = "home_icon.png";
+            }
         }
 
         Question RandomElementAndRemove()
@@ -56,7 +49,20 @@ namespace QuizGame.ViewModels
             return randQuestion;
         }
 
+
         // Commands
+        [RelayCommand]
+        async void Appearing()
+        {
+            DisplayedQuestion = RandomElementAndRemove();
+            CodeSnippetViewModel = new(DisplayedQuestion.CodeBlock, highlightJs);
+            foreach (Answer answer in DisplayedQuestion.Answers)
+            {
+                AnswerViewModels.Add(new AnswerViewModel(answer, new CodeSnippetViewModel(answer.CodeBlock, highlightJs)));
+            }
+            SetHeader();
+        }
+
         [RelayCommand]
         async Task NextAsync(Button button)
         {

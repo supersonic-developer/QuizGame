@@ -6,10 +6,18 @@
              xmlns:viewModels="clr-namespace:QuizGame.ViewModels"
              x:Class="QuizGame.Views.QuestionPage">
 
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
+    
+        
     <ScrollView>
         <Grid
             BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -29,15 +37,23 @@
             <Image 
                 Grid.Row="1"
                 Source="{Binding DisplayedQuestion.ImagePath}" 
-                Aspect="AspectFit"/>
+                Aspect="AspectFit"
+                Margin="10,0,10,0"/>
 
             <views:CodeSnippetView
                 Grid.Row="2"
-                HorizontalOptions="FillAndExpand"
-                BindingContext="{Binding CodeSnippetViewModel}"/>
+                BindingContext="{Binding CodeSnippetViewModel}"
+                HorizontalOptions="CenterAndExpand"/>
+
+            <BoxView 
+                Grid.Row="3" 
+                HeightRequest="3" 
+                BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Gray100}}" 
+                HorizontalOptions="Fill"
+                Margin="10,20,10,10"/>
 
             <CollectionView
-                Grid.Row="3"
+                Grid.Row="4"
                 ItemsSource="{Binding AnswerViewModels}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
@@ -49,7 +65,7 @@
             </CollectionView>
 
             <Button
-                Grid.Row="4"
+                Grid.Row="5"
                 Text="Check Answer"
                 FontSize="20"
                 Command="{Binding NextCommand}"

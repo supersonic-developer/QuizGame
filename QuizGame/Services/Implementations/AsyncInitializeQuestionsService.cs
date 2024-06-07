@@ -16,7 +16,7 @@ namespace QuizGame.Services.Implementations
             // Output 
             List<Question> result = [];
 
-            string path = topics.TopicsData.Select(element => element.Path).ToList()[topics.SelectedTopicIdx!.Value];
+            string path = topics.TopicsData!.Select(element => element.Path).ToList()[topics.SelectedTopicIdx!.Value];
             // Read file content asynchronously
             string content = await fileReaderService.ReadFileAsync(path);
             // Parse the content

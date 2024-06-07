@@ -6,7 +6,7 @@ namespace QuizGame.Models
     public class Topics(IAsyncInitializeService<List<(string, string)>> topicsInitializer)
     {
         // Property
-        public List<(string Path, string Name)> TopicsData { get; private set; } = [];
+        public List<(string Path, string Name)>? TopicsData { get; private set; }
 
         public int? SelectedTopicIdx { get; set; }
 
@@ -14,6 +14,6 @@ namespace QuizGame.Models
          * @param topicsInitializer: The service to initialize the data
          * @retval Topics: the singleton instance of the Topics class
          */
-        public async Task InitAsync() => TopicsData = await topicsInitializer.InitializeAsync();
+        public async Task InitAsync() => TopicsData ??= await topicsInitializer.InitializeAsync();
     }
 }

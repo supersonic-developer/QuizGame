@@ -57,7 +57,9 @@
 
 	<ItemGroup>
 	  <MauiImage Remove="Resources\Images\linkedin-skill-assessments-quizzes\.git" />
+	  <MauiImage Remove="Resources\Images\linkedin-skill-assessments-quizzes\file_modifier.py" />
 	  <MauiImage Remove="Resources\Images\linkedin-skill-assessments-quizzes\LICENSE" />
+	  <MauiImage Remove="Resources\Images\linkedin-skill-assessments-quizzes\README.md" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -86,6 +88,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Resources\Styles\ControlTemplates.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\AnswerView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

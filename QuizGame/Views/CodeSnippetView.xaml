@@ -4,8 +4,9 @@
              x:Class="QuizGame.Views.CodeSnippetView">
 
     <WebView
-        BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}"
-        IsVisible="{Binding IsVisible}">
+        BackgroundColor="{AppThemeBinding Light={StaticResource CodeBackgroundLight}, Dark={StaticResource CodeBackgroundDark}}"
+        IsVisible="{Binding IsVisible}"
+        Margin="10,0,10,0">
         
         <WebView.Source>
             <HtmlWebViewSource Html="{Binding Html2Display}"/>

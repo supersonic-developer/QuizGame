@@ -26,7 +26,6 @@ namespace QuizGame.ViewModels
         [RelayCommand]
         async Task ButtonClickedAsync()
         {
-            WeakReferenceMessenger.Default.Send(new OnNavigationMessage());
             quiz.Questions = null;
             await Shell.Current.GoToAsync($"//{nameof(MainPage)}");
         }

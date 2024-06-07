@@ -16,16 +16,13 @@
 
             <Label
                 Text="{Binding Title}"
-                HorizontalOptions="Center"
                 Style="{StaticResource Headline}"
                 VerticalOptions="Center"/>
         
             <Image
-                HorizontalOptions="Center"
                 Source="{Binding ImagePath}"/>
 
             <Label
-                HorizontalOptions="Center"
                 VerticalOptions="Center"
                 Text="{Binding Subtitle}"
                 Style="{StaticResource Headline}" />

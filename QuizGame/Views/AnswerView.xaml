@@ -6,45 +6,45 @@
              xmlns:converts="clr-namespace:QuizGame.Converters"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
-   
-    <Grid
-        HorizontalOptions="Fill">
-        
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Frame
+        BackgroundColor="{Binding AnswerState, Converter={converts:IsAnswerDisplay}}" 
+        BorderColor="{Binding AnswerState, Converter={converts:IsAnswerDisplay}}" 
+        CornerRadius="25"
+        Margin="10" >
+        <Grid>
 
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <RadioButton
-            Grid.Row="0"
-            x:Name="radioButton"
-            Content="{Binding Answer.Text}"
-            TextColor="{StaticResource White}"
-            Background="{Binding AnswerState, Converter={converts:IsAnswerDisplay}}"
-            CornerRadius="25"
-            Margin="10,0,10,0"
-            GroupName="Answers"
-            HorizontalOptions="Fill">
+            <RadioButton
+                Grid.Row="0"
+                x:Name="radioButton"
+                Content="{Binding Answer.Text}"
+                CornerRadius="15"
+                Margin="10"
+                GroupName="Answers"
+                HorizontalOptions="Fill">
 
-            <RadioButton.Behaviors>
-                <toolkit:EventToCommandBehavior
-                    EventName="CheckedChanged"
-                    Command="{Binding CheckedChangedCommand}"
-                    CommandParameter="{Binding IsChecked, Source={x:Reference radioButton}}"/>
-            </RadioButton.Behaviors>
-        </RadioButton>
+                <RadioButton.Behaviors>
+                    <toolkit:EventToCommandBehavior
+                        EventName="CheckedChanged"
+                        Command="{Binding CheckedChangedCommand}"
+                        CommandParameter="{Binding IsChecked, Source={x:Reference radioButton}}"/>
+                </RadioButton.Behaviors>
+            </RadioButton>
 
-        <Image
-            Grid.Row="1"
-            Source="{Binding Answer.ImagePath}"
-            Aspect="AspectFit"/>
+            <Image
+                Grid.Row="1"
+                Source="{Binding Answer.ImagePath}"
+                Aspect="AspectFit"/>
 
-        <views:CodeSnippetView
-            Grid.Row="2"
-            HorizontalOptions="Fill"
-            BindingContext="{Binding CodeSnippetViewModel}" />
+            <views:CodeSnippetView
+                Grid.Row="2"
+                BindingContext="{Binding CodeSnippetViewModel}" />
 
-    </Grid>    
+        </Grid>
+    </Frame>
 </ContentView>
