@@ -1,5 +1,4 @@
-﻿
-namespace QuizGame.Services.Interfaces
+﻿namespace QuizGame.Services.Interfaces
 {
     public interface IAsyncInitializeService<T>
     {

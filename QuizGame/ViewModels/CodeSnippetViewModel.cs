@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using QuizGame.Helpers;
 using QuizGame.Models;
-using QuizGame.Services.Interfaces;
 
 namespace QuizGame.ViewModels
 {

@@ -1,11 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using QuizGame.Models;
 using QuizGame.Helpers;
+using QuizGame.Models;
 using QuizGame.Views;
-using QuizGame.Services.Interfaces;
-using QuizGame.Services.Implementations;
-using System.Collections.ObjectModel;
 
 namespace QuizGame.ViewModels
 {
@@ -52,7 +49,7 @@ namespace QuizGame.ViewModels
 
         // Commands
         [RelayCommand]
-        async void Appearing()
+        void Appearing()
         {
             DisplayedQuestion = RandomElementAndRemove();
             CodeSnippetViewModel = new(DisplayedQuestion.CodeBlock, highlightJs);

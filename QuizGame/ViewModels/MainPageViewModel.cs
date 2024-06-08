@@ -1,9 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using QuizGame.Helpers;
 using QuizGame.Models;
-using QuizGame.Services.Interfaces;
 using QuizGame.Views;
 
 namespace QuizGame.ViewModels
@@ -44,7 +42,7 @@ namespace QuizGame.ViewModels
         // Commands
         [RelayCommand]
         async Task AppearingAsync()
-        { 
+        {
             IsLoading = true;
             SetHeader();
             await topics.InitAsync();

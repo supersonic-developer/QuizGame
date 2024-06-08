@@ -31,12 +31,12 @@
             x:Name="searchBar" 
             Placeholder="Search topic..."  
             Margin="10, 10, 10, 10" 
-            WidthRequest="300">
+            WidthRequest="250">
             <SearchBar.Behaviors>
                 <toolkit:EventToCommandBehavior
                     EventName="TextChanged"
                     Command="{Binding PerformSearchCommand}"
-                    CommandParameter="{Binding Text, Source={x:Reference searchBar}}"/>
+                    CommandParameter="{Binding Text, Source={x:Reference searchBar}}" />
             </SearchBar.Behaviors>
         </SearchBar>
 

@@ -1,9 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using QuizGame.Helpers;
-using QuizGame.Views;
 using QuizGame.Models;
+using QuizGame.Views;
 
 namespace QuizGame.ViewModels
 {

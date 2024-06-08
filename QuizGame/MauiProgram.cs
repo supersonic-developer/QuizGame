@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using QuizGame.Handlers;
 using QuizGame.Helpers;
 using QuizGame.Models;
 using QuizGame.Services.Implementations;
 using QuizGame.Services.Interfaces;
 using QuizGame.ViewModels;
 using QuizGame.Views;
-using System.Collections.ObjectModel;
 
 namespace QuizGame
 {
@@ -22,7 +22,11 @@ namespace QuizGame
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 })
-                .UseMauiCommunityToolkit();
+                .UseMauiCommunityToolkit()
+                .ConfigureMauiHandlers(handlers =>
+                {
+                    handlers.AddHandler<SearchBar, SearchBarExHandler>();
+                });
 
             builder.ConfigureServices();
 #if DEBUG
