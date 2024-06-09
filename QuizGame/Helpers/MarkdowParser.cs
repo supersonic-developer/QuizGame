@@ -65,6 +65,8 @@ namespace QuizGame.Helpers
                     {
                         currentQuestion.ImagePath = rootDir + @"/" + linkInline.Url?.Replace(@"\?raw=[^\.]*\.", ".");
                     }
+                    else if (linkInline.Url != null)
+                    { }
                 }
                 else if (descendant is CodeInline descendantCode)
                 {
@@ -72,10 +74,14 @@ namespace QuizGame.Helpers
                     {
                         currentQuestion.CodeBlock ??= new CodeSnippet("", descendantCode.Content.ToString());
                     }
-                    else 
+                    else
                     {
                         currentQuestion.Answers[^1].CodeBlock ??= new CodeSnippet("", descendantCode.Content.ToString());
                     }
+                }
+                else if (descendant is LiteralInline)
+                {
+                    // Reference to answer
                 }
             }
         }
