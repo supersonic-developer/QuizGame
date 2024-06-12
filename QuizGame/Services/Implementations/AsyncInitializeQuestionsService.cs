@@ -20,7 +20,8 @@ namespace QuizGame.Services.Implementations
             // Read file content asynchronously
             string content = await fileReaderService.ReadFileAsync(path);
             // Parse the content
-            result = MarkdowParser.ParseQuestions(content, Path.GetDirectoryName(path)?.Replace(@"\", "/") ?? throw new Exception($"No directory was found for image at path:{path}"));
+            MarkdowParser parser = new(Path.GetDirectoryName(path)?.Replace(@"\", "/") ?? throw new Exception($"No directory was found for image at path:{path}"));
+            result = parser.ParseQuestions(content);
 
             return result;
         }

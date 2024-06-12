@@ -23,6 +23,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
 
@@ -73,6 +74,10 @@
                 Margin="0,20,20,20"
                 HorizontalOptions="End"/>
 
+            <views:ReferenceView
+                Grid.Row="6"
+                BindingContext="{Binding ReferenceViewModel}"
+                HorizontalOptions="CenterAndExpand"/>
         </Grid>
     </ScrollView>
 

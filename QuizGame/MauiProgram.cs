@@ -52,6 +52,8 @@ namespace QuizGame
         {
             // File reader service for async file reading
             services.AddSingleton<IFileReaderService, FileReaderService>();
+            // Dialog service for async dialog displaying
+            services.AddSingleton<IDialogService, DialogService>();
 
             // Topics service
             services.AddSingleton<IAsyncInitializeService<List<(string, string)>>, AsyncInitilizeTopicsService>();
@@ -73,6 +75,7 @@ namespace QuizGame
             services.AddSingleton<HeaderViewModel>();
             services.AddSingleton<MainPageViewModel>();
             services.AddTransient<QuestionPageViewModel>();
+            services.AddTransient<ReferenceViewModel>();
 
             return services;
         }

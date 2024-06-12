@@ -1,23 +1,38 @@
 ﻿using Markdig;
+using Markdig.Extensions.TaskLists;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using QuizGame.Models;
+using System;
+using System.Security.Policy;
 
 namespace QuizGame.Helpers
 {
-    public static class MarkdowParser
+    public class MarkdowParser(string directory)
     {
+        enum ParserState
+        {
+           ReadingQuestion,
+           ReadingAnswer,
+           ReadingReference,
+           LinkWasRead,
+        }
+
+        ParserState state;
+        readonly List<Question> quiz = [];
+        readonly string directory = directory;
+        string last_url = "";
+        bool isAnswerRead = false;
+
         // Parser functions
-        public static List<Question> ParseQuestions(string mdText, string directory)
+        public List<Question> ParseQuestions(string mdText)
         {
             // Parse the text 
             var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
             var document = Markdown.Parse(mdText, pipeline);
 
             // Create the list for questions
-            List<Question> quiz = [];
-            // Auxiliary variable for process
-            bool isReadingQuestion = false;
+            quiz.Clear();
 
             // Traverse the AST and process the content
             foreach (var block in document)
@@ -25,131 +40,222 @@ namespace QuizGame.Helpers
                 switch (block)
                 {
                     case HeadingBlock:
-                        isReadingQuestion = true;
                         // Parse heading to question
-                        ParseQuestion((HeadingBlock)block, quiz);
+                        state = ParserState.ReadingQuestion;
+                        ParseQuestion((HeadingBlock)block);
                         break;
                     case ListBlock:
-                        isReadingQuestion = false;
-                        // Add answer(s) to question
-                        ParseAnswer((ListBlock)block, quiz[^1], directory);
+                        // Parse list block to answers
+                        state = ParserState.ReadingAnswer;
+                        ParseListBlock((ListBlock)block);
+                        break;
+                    case ParagraphBlock:
+                        // Parse paragraph block to reference
+                        state = ParserState.ReadingReference;
+                        ParseParagraphBlock((ParagraphBlock)block);
                         break;
                     case FencedCodeBlock:
                         // Parse code block and add to question or answer
-                        ParseCodeSnippet((FencedCodeBlock)block, quiz[^1], isReadingQuestion);
-                        break;
-                    case ParagraphBlock:
-                        // Pictures that is required to use
-                        ParseImages((ParagraphBlock)block, quiz[^1], directory, isReadingQuestion);
-                        // Links for answers, currently I wont use
-                        break;
-                    case LinkReferenceDefinitionGroup:
-                        // Still links just they werent placed inside brackets
-                        break;
-                    default:
+                        ParseCodeSnippet((FencedCodeBlock)block);
                         break;
                 }
             }
             return quiz;
         }
 
-        static void ParseImages(ParagraphBlock paragraphBlock, Question currentQuestion, string rootDir, bool isReadingQuestion)
+        void ParseLiteralInline(LiteralInline literalInline)
+        {
+            switch (state)
+            {
+                case ParserState.ReadingAnswer:
+                    quiz[^1].Answers[^1].Text += literalInline.ToString();
+                    break;
+                case ParserState.ReadingReference:
+                    quiz[^1].Reference!.Text += literalInline.ToString();
+                    break;
+                case ParserState.ReadingQuestion:
+                    quiz[^1].Text += literalInline.ToString();
+                    break;
+                case ParserState.LinkWasRead:
+                    state = ParserState.ReadingReference;
+                    quiz[^1].Reference!.Links.Add((last_url, literalInline.ToString()));
+                    break;
+            }
+        }
+
+        void ParseLinkInline(LinkInline linkInline)
+        {
+            if (linkInline.IsImage)
+            {
+                if (state == ParserState.ReadingQuestion)
+                {
+                    quiz[^1].ImagePath = directory + @"/" + linkInline.Url?.Replace(@"\?raw=[^\.]*\.", ".");
+                }
+                else if (state == ParserState.ReadingAnswer)
+                {
+                    quiz[^1].Answers[^1].ImagePath = directory + @"/" + linkInline.Url?.Replace(@"\?raw=[^\.]*\.", ".");
+                }
+            }
+            else if (linkInline.Url != null)
+            {
+                last_url = linkInline.Url;
+                state = ParserState.LinkWasRead;
+            }
+        }
+
+        void ParseCodeInline(CodeInline codeInline, bool isInlineCode)
+        {
+            // Only content of paragraph block is considered code snippet
+            if (isInlineCode)
+            {
+                switch (state)
+                {
+                    case ParserState.ReadingQuestion:
+                        quiz[^1].CodeBlock ??= new CodeSnippet("", codeInline.Content.ToString());
+                        break;
+                    case ParserState.ReadingAnswer:
+                        quiz[^1].Answers[^1].CodeBlock ??= new CodeSnippet("", codeInline.Content.ToString());
+                        break;
+                    case ParserState.ReadingReference:
+                        quiz[^1].Reference!.CodeBlock ??= new CodeSnippet("", codeInline.Content.ToString());
+                        break;
+                }
+                
+            } // Part of text, not inline code
+            else
+            {
+                switch (state)
+                {
+                    case ParserState.ReadingQuestion:
+                        quiz[^1].Text += codeInline.Content.ToString();
+                        break;
+                    case ParserState.ReadingAnswer:
+                        quiz[^1].Answers[^1].Text += codeInline.Content.ToString();
+                        break;
+                    case ParserState.ReadingReference:
+                        quiz[^1].Reference!.Text += codeInline.Content.ToString();
+                        break;
+                }
+            }
+        }
+
+        void ParseParagraphBlock(ParagraphBlock paragraphBlock)
         {
             if (paragraphBlock.Inline == null)
                 return;
+            if (state == ParserState.ReadingReference)
+                quiz[^1].Reference = new Reference([]);
             foreach (var descendant in paragraphBlock.Inline.Descendants())
             {
-                if (descendant is LinkInline linkInline)
+                switch (descendant)
                 {
-                    if (linkInline.IsImage)
-                    {
-                        currentQuestion.ImagePath = rootDir + @"/" + linkInline.Url?.Replace(@"\?raw=[^\.]*\.", ".");
-                    }
-                    else if (linkInline.Url != null)
-                    { }
-                }
-                else if (descendant is CodeInline descendantCode)
-                {
-                    if (isReadingQuestion)
-                    {
-                        currentQuestion.CodeBlock ??= new CodeSnippet("", descendantCode.Content.ToString());
-                    }
-                    else
-                    {
-                        currentQuestion.Answers[^1].CodeBlock ??= new CodeSnippet("", descendantCode.Content.ToString());
-                    }
-                }
-                else if (descendant is LiteralInline)
-                {
-                    // Reference to answer
+                    case LiteralInline literalInline:
+                        ParseLiteralInline(literalInline);
+                        break;
+                    case LinkInline linkInline:
+                        ParseLinkInline(linkInline);
+                        break;
+                    case CodeInline codeInline:
+                        bool isText = paragraphBlock.Inline.Descendants().Any(d => d is LiteralInline literal && literal.ToString() != " ");
+                        ParseCodeInline(codeInline, !isText);
+                        break;
+                    case TaskList taskList:
+                        quiz[^1].Answers[^1].IsCorrect = taskList.Checked;
+                        break;
+                    default:
+                        break;
                 }
             }
+            isAnswerRead = false;
         }
 
         // Parse heading to question, if it is not a question (4 level heading) then returns null
-        static void ParseQuestion(HeadingBlock headingBlock, List<Question> quiz)
+        void ParseQuestion(HeadingBlock headingBlock)
         {
-            if (headingBlock.Level == 4)
+            if (headingBlock.Inline is null || headingBlock.Level != 4)
+                return;
+            quiz.Add(new Question("", []));
+            foreach (var descendant in headingBlock.Inline!.Descendants())
             {
-                if (headingBlock.Inline is null)
-                    return;
-                string? question = null;
-                foreach (var descendant in headingBlock.Inline.Descendants())
-                {
-                    if (descendant is LiteralInline)
-                        question += descendant.ToString();
-                    else if (descendant is CodeInline descendantCode)
-                        question += descendantCode.Content.ToString();
-                }
-                quiz.Add(new Question(question ?? throw new Exception("There is no question."), []));
+                if (descendant is LiteralInline literalInline)
+                    ParseLiteralInline(literalInline);
+                else if (descendant is CodeInline codeInline)
+                   ParseCodeInline(codeInline, false);
             }
+            isAnswerRead = false;
         }
 
         // Parse listblock to answer(s) and add it to the question
-        static void ParseAnswer(ListBlock listBlock, Question currentQuestion, string rootDir)
+        void ParseAnswer(ListBlock listBlock)
         {
+            // Iterate list block
             foreach (ListItemBlock listItemBlock in listBlock.Cast<ListItemBlock>())
             {
+                // Iterate list item
+                foreach (var listItem in listItemBlock.Descendants())
+                {
+                    switch (listItem)
+                    {
+                        case ParagraphBlock paragraphBlock:
+                            quiz[^1].Answers.Add(new Answer("", false));
+                            ParseParagraphBlock(paragraphBlock);
+                            break;
+                        case FencedCodeBlock fencedCodeBlock:
+                            ParseCodeSnippet(fencedCodeBlock);
+                            break;
+                    }
+                }
+            }
+        }
+
+        void ParseReferenceList(ListBlock listBlock)
+        {
+            // Iterate list block
+            foreach (ListItemBlock listItemBlock in listBlock.Cast<ListItemBlock>())
+            {
+                // Iterate list item
                 foreach (var listItem in listItemBlock.Descendants())
                 {
                     if (listItem is ParagraphBlock paragraphBlock)
                     {
-                        if (paragraphBlock.Inline?.FirstChild is Markdig.Extensions.TaskLists.TaskList taskList)
-                        {
-                            string answer = "";
-                            string? imagePath = null;
-                            foreach (var descendant in paragraphBlock.Inline.Descendants())
-                            {
-                                if (descendant is LiteralInline && descendant.ToString() != " :")
-                                    answer += descendant.ToString();
-                                else if (descendant is CodeInline descendantCode)
-                                    answer += descendantCode.Content.ToString();
-                                else if (descendant is LinkInline linkInline)
-                                {
-                                    if (linkInline.IsImage)
-                                        imagePath = rootDir + @"/" + linkInline.Url?.Replace(@"\?raw=[^\.]*\.", ".");
-                                }
-                            }
-                            currentQuestion.Answers.Add(new Answer(answer, taskList.Checked, null, imagePath));
-                        }
+                        ParseParagraphBlock(paragraphBlock);
                     }
                 }
             }
         }
 
-        static void ParseCodeSnippet(FencedCodeBlock codeBlock, Question currentQuestion, bool isReadingQuestion)
+        void ParseListBlock(ListBlock listBlock)
+        {
+            if (isAnswerRead)
+            {
+                state = ParserState.ReadingReference;
+                ParseReferenceList(listBlock);
+                isAnswerRead = false;
+            }
+            else 
+            {
+                ParseAnswer(listBlock);
+                isAnswerRead = true;
+            }
+        }
+
+        void ParseCodeSnippet(FencedCodeBlock codeBlock)
         {
             string? language = codeBlock.Info;
             string? code = codeBlock.Lines.ToString();
             if (language != null && code != null)
             {
-                if (isReadingQuestion)
+                switch (state)
                 {
-                    currentQuestion.CodeBlock ??= new CodeSnippet(language, code);
-                }
-                else
-                {
-                    currentQuestion.Answers[^1].CodeBlock ??= new CodeSnippet(language, code);
+                    case ParserState.ReadingQuestion:
+                        quiz[^1].CodeBlock ??= new CodeSnippet(language, code);
+                        break;
+                    case ParserState.ReadingAnswer:
+                        quiz[^1].Answers[^1].CodeBlock ??= new CodeSnippet(language, code);
+                        break;
+                    case ParserState.ReadingReference:
+                        quiz[^1].Reference!.CodeBlock ??= new CodeSnippet(language, code);
+                        break;
                 }
             }
         }
